@@ -11,22 +11,22 @@ interface datatype {
 
 const Aboutdata: datatype[] = [
     {
-        heading: "About us.",
+        heading: "Simbar Plants & Media",
         imgSrc: "/images/aboutus/imgOne.svg",
-        paragraph: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem',
-        link: 'Learn more'
+        paragraph: 'Kami menawarkan tanaman simbar pilihan dengan kualitas terbaik, dilengkapi moss dan media tanam alami yang mendukung pertumbuhan sehat dan tampilan alami yang menawan.',
+        link: 'Shop Now'
     },
     {
-        heading: "Services.",
+        heading: "Simbar Care Supplies",
         imgSrc: "/images/aboutus/imgTwo.svg",
-        paragraph: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem',
-        link: 'Learn more'
+        paragraph: 'Produk ini meliputi benang simbar, kawat bonsai, kawat besi, vitamin, dan pupuk yang diformulasikan khusus untuk memudahkan perawatan tanaman agar selalu sehat dan optimal.',
+        link: 'Shop Now'
     },
     {
-        heading: "Our Works.",
+        heading: "Accessories & Displays",
         imgSrc: "/images/aboutus/imgThree.svg",
-        paragraph: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem',
-        link: 'Learn more'
+        paragraph: 'Kami menyediakan lampu khusus tanaman dan frame dekoratif yang berfungsi mempercantik tampilan simbar di berbagai ruang, menambah nilai estetika dan keindahan tanaman Anda.',
+        link: 'Shop Now'
     },
 ]
 
@@ -36,8 +36,8 @@ const Aboutus = () => {
         <div id="aboutus-section">
             <div className='mx-auto max-w-7xl px-4 py-24 my-32 lg:px-10 bg-lightgrey rounded-3xl relative'>
                 <Image src="/images/aboutus/dots.svg" width={100} height={100} alt="dots-image" className="absolute bottom-1 -left-20" />
-                <h3 className='text-center text-blue text-lg tracking-widest'>ABOUT US</h3>
-                <h4 className='text-center text-4xl lg:text-65xl font-bold'>Know more about us.</h4>
+                <h3 className='text-center text-blue text-lg tracking-widest'>Our Product</h3>
+                <h4 className='text-center text-4xl lg:text-65xl font-bold'>Know more about our product.</h4>
                 <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 my-16 gap-x-16 lg:gap-x-32'>
                     {Aboutdata.map((item, i) => (
                         <div key={i} className='hover:bg-navyblue bg-white rounded-3xl mt-16 pt-10 pl-8 pb-10 pr-6 shadow-xl group'>
