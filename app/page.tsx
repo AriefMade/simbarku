@@ -1,17 +1,17 @@
-import Banner from './components/Banner/index';
-import Aboutus from './components/Aboutus/index';
-import Dedicated from './components/Dedicated/index';
-import Digital from './components/Digital/index';
-import Beliefs from './components/Beliefs/index';
-import Wework from './components/Wework/index';
-import Ourteam from './components/Ourteam/index';
-import Featured from './components/Featured/index';
-import Manage from './components/Manage/index';
-import FAQ from './components/FAQ/index';
-import Testimonials from './components/Testimonials/index';
-import Articles from './components/Articles/index';
-import Joinus from './components/Joinus/index';
-import Insta from './components/Insta/index';
+import Banner from '../components/features/sections/Banner/index';
+import Aboutus from '../components/features/sections/Aboutus/index';
+import Dedicated from '../components/features/Dedicated/index';
+import Digital from '../components/features/Digital/index';
+import Beliefs from '../components/features/Beliefs/index';
+import Wework from '../components/features/Wework/index';
+import Ourteam from '../components/features/Ourteam/index';
+import Featured from '../components/features/Featured/index';
+import Manage from '../components/features/Manage/index';
+import FAQ from '../components/features/sections/FAQ/index';
+import Testimonials from '../components/features/sections/Testimonials/index';
+import Articles from '../components/features/Articles/index';
+import Joinus from '../components/features/Joinus/index';
+import Insta from '../components/features/Insta/index';
 
 
 export default function Home() {

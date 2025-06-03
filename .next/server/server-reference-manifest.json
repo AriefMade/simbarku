@@ -1,5 +1,14 @@
 {
-  "node": {},
+  "node": {
+    "251d94750fde4e767a01723a8737d28a7eb0d427": {
+      "workers": {
+        "app/admin/(dashboard)/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22D%3A%5C%5CAplikasi%5C%5Csimbarku%5C%5Capp%5C%5Cadmin%5C%5C(dashboard)%5C%5Cactions.ts%22%2C%5B%22deleteProduct%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/admin/(dashboard)/page": "action-browser"
+      }
+    }
+  },
   "edge": {},
-  "encryptionKey": "6PP0mceL3KIkRoQeSCiU/Y7D3RlfcCJP3OPXrtU+mbA="
+  "encryptionKey": "FkNrfRVYHHaLb6coxYx/Z32RLI7aKyG6tfFVohCe0h4="
 }
