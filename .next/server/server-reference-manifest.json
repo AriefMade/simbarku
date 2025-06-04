@@ -1,8 +1,8 @@
 {
   "node": {
-    "251d94750fde4e767a01723a8737d28a7eb0d427": {
+    "7f809637be80f5fb93558b3424ca279b993a0581": {
       "workers": {
-        "app/admin/(dashboard)/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22D%3A%5C%5CAplikasi%5C%5Csimbarku%5C%5Capp%5C%5Cadmin%5C%5C(dashboard)%5C%5Cactions.ts%22%2C%5B%22deleteProduct%22%5D%5D%5D&__client_imported__=true!"
+        "app/admin/(dashboard)/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22C%3A%5C%5CUsers%5C%5CWiera%5C%5CDocuments%5C%5CCodingan%5C%5CPBW%5C%5Cazzz%5C%5Csimbarku%5C%5Capp%5C%5Cadmin%5C%5C(dashboard)%5C%5Cactions.ts%22%2C%5B%22deleteProduct%22%5D%5D%5D&__client_imported__=true!"
       },
       "layer": {
         "app/admin/(dashboard)/page": "action-browser"
@@ -10,5 +10,5 @@
     }
   },
   "edge": {},
-  "encryptionKey": "FkNrfRVYHHaLb6coxYx/Z32RLI7aKyG6tfFVohCe0h4="
+  "encryptionKey": "SlGa6xT9nWt3TR55KDRPxUjclhmKUx+9kMNG8mAjG9A="
 }
