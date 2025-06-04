@@ -1,56 +1,82 @@
+'use client';
+
+import { SelectProduct } from '@/lib/db-types';  // Perbaiki import
+import { formatPrice } from '@/lib/db-client';  // Perbaiki import
+import { TableCell, TableRow } from '@/components/common/ui/ui/table';
 import Image from 'next/image';
-import { Badge } from '@/components/common/ui/ui/badge';
 import { Button } from '@/components/common/ui/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/common/ui/ui/dropdown-menu';
 import { MoreHorizontal } from 'lucide-react';
-import { TableCell, TableRow } from '@/components/common/ui/ui/table';
-import { SelectProduct } from '@/lib/db';
-import { deleteProduct } from './actions';
 
 export function Product({ product }: { product: SelectProduct }) {
+  const formattedPrice = formatPrice(Number(product.price));
+  const formattedDate = typeof product.availableAt === 'string'
+    ? new Date(product.availableAt).toLocaleDateString()
+    : product.availableAt.toLocaleDateString();
+  
+  const idString = String(product.id || '');
+
   return (
     <TableRow>
       <TableCell className="hidden sm:table-cell">
-        <Image
-          alt="Product image"
-          className="aspect-square rounded-md object-cover"
-          height="64"
-          src={product.imageUrl}
-          width="64"
-        />
+        <div className="h-11 w-11 rounded-md overflow-hidden">
+          <Image
+            src={product.imageUrl || '/placeholder.svg'}
+            width={44}
+            height={44}
+            alt={product.name}
+            className="object-cover"
+          />
+        </div>
       </TableCell>
       <TableCell className="font-medium">{product.name}</TableCell>
       <TableCell>
-        <Badge variant="outline" className="capitalize">
-          {product.status}
-        </Badge>
+        <div className="flex items-center gap-2">
+          <div
+            className={`h-2 w-2 rounded-full ${
+              product.status === 'active'
+                ? 'bg-green-600'
+                : product.status === 'inactive'
+                ? 'bg-yellow-600'
+                : 'bg-gray-400'
+            }`}
+          />
+          <span className="capitalize">{product.status}</span>
+        </div>
       </TableCell>
-      <TableCell className="hidden md:table-cell">{`$${product.price}`}</TableCell>
-      <TableCell className="hidden md:table-cell">{product.stock}</TableCell>
-      <TableCell className="hidden md:table-cell">
-        {product.availableAt.toLocaleDateString("en-US")}
-      </TableCell>
+      <TableCell className="hidden md:table-cell">{formattedPrice}</TableCell>
+      <TableCell className="hidden md:table-cell">{product.stock} units</TableCell>
+      <TableCell className="hidden md:table-cell">{formattedDate}</TableCell>
       <TableCell>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button aria-haspopup="true" size="icon" variant="ghost">
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
               <MoreHorizontal className="h-4 w-4" />
-              <span className="sr-only">Toggle menu</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <a href={`/admin/products/edit/${idString}`}>Edit</a>
+            </DropdownMenuItem>
             <DropdownMenuItem>
-              <form action={deleteProduct}>
-                <button type="submit">Delete</button>
-              </form>
+              {/* Untuk static export, gunakan client-side deletion */}
+              <button
+                className="w-full text-left"
+                onClick={() => {
+                  if (confirm('Are you sure you want to delete this product?')) {
+                    console.log('Would delete product:', product.id);
+                    // Untuk implementasi nyata, bisa menggunakan fetch ke API
+                  }
+                }}
+              >
+                Delete
+              </button>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

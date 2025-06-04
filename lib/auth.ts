@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { db } from './db'; 
 
+// Gunakan implementasi sederhana untuk static export
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     CredentialsProvider({
@@ -11,25 +11,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        // Validasi sederhana - hardcoded
-        if (credentials?.username === 'admin' && credentials?.password === 'admin123') {
-          return { 
-            id: '1', 
-            name: 'Admin User', 
-            email: 'admin@example.com',
-            image: '/placeholder-user.jpg'
-          };
+        if (!credentials?.username || !credentials?.password) {
+          return null;
         }
         
-        // Opsi untuk validasi database (komen untuk saat ini)
-        // try {
-        //   const user = await db.query("SELECT * FROM users WHERE username = ?", [credentials?.username]);
-        //   if (user && user.password === credentials?.password) { // Gunakan bcrypt di produksi
-        //     return { id: user.id, name: user.name, email: user.email };
-        //   }
-        // } catch (error) {
-        //   console.error('Database error:', error);
-        // }
+        try {
+          // Static implementation untuk output: export
+          if (credentials.username === 'admin' && credentials.password === 'admin123') {
+            return {
+              id: '1',
+              name: 'Admin User',
+              email: 'admin@simbarku.com',
+              image: '/placeholder-user.jpg'
+            };
+          }
+        } catch (error) {
+          console.error('Auth error:', error);
+        }
         
         return null;
       }
@@ -41,8 +39,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: '/login',
     signOut: '/',
-    error: '/login', 
+    error: '/login',
   },
+  
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 hari
+  },
+  
   callbacks: {
     async session({ session, token }) {
       if (token.sub) {
@@ -56,8 +60,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return token;
     }
-  },
-  session: {
-    strategy: "jwt"
   }
 });

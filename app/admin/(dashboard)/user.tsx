@@ -14,10 +14,11 @@ import {
 import Link from 'next/link';
 import { SignOutButton } from './sign-out-button';
 
-// Tidak boleh menggunakan async function di level teratas Client Component
 interface UserData {
+  id?: string;
+  name?: string;
+  email?: string;
   image?: string;
-  // Add other user properties as needed
 }
 
 export function User() {
@@ -25,7 +26,6 @@ export function User() {
   const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
-    // Gunakan async function di dalam useEffect
     const fetchSession = async () => {
       try {
         const response = await fetch('/api/auth/session');
@@ -43,7 +43,6 @@ export function User() {
     fetchSession();
   }, []);
 
-  // Tampilkan loading state
   if (isLoading) {
     return (
       <Button
@@ -74,10 +73,14 @@ export function User() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuLabel>{user?.name || 'My Account'}</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Settings</DropdownMenuItem>
-        <DropdownMenuItem>Support</DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link href="/admin/settings" className="w-full">Settings</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link href="/admin/profile" className="w-full">Profile</Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         {user ? (
           <DropdownMenuItem>
@@ -85,7 +88,7 @@ export function User() {
           </DropdownMenuItem>
         ) : (
           <DropdownMenuItem>
-            <Link href="/login">Sign In</Link>
+            <Link href="/login" className="w-full">Sign In</Link>
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>

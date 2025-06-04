@@ -1,4 +1,3 @@
-import 'server-only';
 import mysql from 'mysql2/promise';
 import { drizzle } from 'drizzle-orm/mysql2';
 import { 
@@ -8,7 +7,10 @@ import {
   int, 
   timestamp, 
   mysqlEnum, 
-  serial 
+  serial,
+  varchar,
+  binary,
+  date
 } from 'drizzle-orm/mysql-core';
 import { count, eq, like } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
@@ -24,9 +26,9 @@ const connection = mysql.createPool({
 
 export const db = drizzle(connection);
 
-// Definisi skema
+// Definisi tabel products
 export const products = mysqlTable('products', {
-  id: serial('id').primaryKey(),
+  id: int('id').primaryKey().autoincrement(),
   imageUrl: text('image_url').notNull(),
   name: text('name').notNull(),
   status: mysqlEnum('status', ['active', 'inactive', 'archived']).notNull(),
@@ -35,47 +37,199 @@ export const products = mysqlTable('products', {
   availableAt: timestamp('available_at').notNull()
 });
 
+// Definisi tabel admin
+export const admins = mysqlTable('admin', {
+  id_user: int('id_user').primaryKey().autoincrement(),  // Gunakan id_user sesuai database
+  username: varchar('username', { length: 20 }).notNull(),
+  password: varchar('password', { length: 15 }).notNull()
+});
+
+// Definisi tabel forum
+export const forums = mysqlTable('forum', {
+  idPesan: int('id_pesan').primaryKey().autoincrement(),
+  isiPesan: text('isi_pesan').notNull(),
+  gambarSimbarUser: binary('gambar_simbar_user'),
+  kategori: varchar('kategori', { length: 255 }).notNull()
+});
+
+// Definisi tabel testimoni
+export const testimonials = mysqlTable('testimoni', {
+  idTestimoni: int('id_testimoni').primaryKey().autoincrement(),
+  nama: text('nama').notNull(),
+  deskripsi: text('deskripsi').notNull(),
+  rating: int('rating').notNull()
+});
+
+// Definisi tabel transaksi
+export const transactions = mysqlTable('transaksi', {
+  idTransaksi: int('id_transaksi').primaryKey().autoincrement(),
+  nama: int('nama').notNull(),
+  harga: int('harga').notNull(),
+  tanggal: date('tanggal').notNull()
+});
+
+// Definisi tabel user
+export const users = mysqlTable('user', {
+  idUser: int('id_user').primaryKey().autoincrement(),
+  nama: varchar('nama', { length: 30 }).notNull(),
+  noTelp: int('no_telp').notNull(),
+  alamat: text('alamat').notNull(),
+  email: text('email').notNull()
+});
+
 export type SelectProduct = typeof products.$inferSelect;
+export type SelectAdmin = typeof admins.$inferSelect;
+export type SelectUser = typeof users.$inferSelect;
+export type SelectForum = typeof forums.$inferSelect;
+export type SelectTestimoni = typeof testimonials.$inferSelect;
+export type SelectTransaksi = typeof transactions.$inferSelect;
+
 export const insertProductSchema = createInsertSchema(products);
 
-// Fungsi-fungsi untuk mengakses data
+// Fungsi untuk mengakses products
 export async function getProducts(
   search: string,
-  offset: number
+  offset: number = 0
 ): Promise<{
   products: SelectProduct[];
   newOffset: number | null;
   totalProducts: number;
 }> {
-  // Searching
-  if (search) {
-    return {
-      products: await db
+  try {
+    // Searching
+    if (search) {
+      const filteredProducts = await db
         .select()
         .from(products)
         .where(like(products.name, `%${search}%`))
-        .limit(1000),
+        .limit(1000);
+      
+      return {
+        products: filteredProducts,
+        newOffset: null,
+        totalProducts: filteredProducts.length
+      };
+    }
+
+    // Pagination
+    const productsPerPage = 5;
+    const totalProductsResult = await db.select({ count: count() }).from(products);
+    const totalCount = Number(totalProductsResult[0].count);
+    
+    const moreProducts = await db
+      .select()
+      .from(products)
+      .limit(productsPerPage)
+      .offset(offset);
+    
+    const newOffset = moreProducts.length === productsPerPage ? offset + productsPerPage : null;
+
+    return {
+      products: moreProducts,
+      newOffset,
+      totalProducts: totalCount
+    };
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    return {
+      products: [],
       newOffset: null,
       totalProducts: 0
     };
   }
-
-  if (offset === null) {
-    return { products: [], newOffset: null, totalProducts: 0 };
-  }
-
-  // Pagination
-  let totalProducts = await db.select({ count: count() }).from(products);
-  let moreProducts = await db.select().from(products).limit(5).offset(offset);
-  let newOffset = moreProducts.length >= 5 ? offset + 5 : null;
-
-  return {
-    products: moreProducts,
-    newOffset,
-    totalProducts: totalProducts[0].count
-  };
 }
 
+// Fungsi untuk delete product
 export async function deleteProductById(id: number) {
-  await db.delete(products).where(eq(products.id, id));
+  try {
+    await db.delete(products).where(eq(products.id, id));
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    return { success: false, error };
+  }
+}
+
+// Fungsi untuk mendapatkan admin berdasarkan username
+export async function getAdminByUsername(username: string) {
+  try {
+    const result = await db
+      .select()
+      .from(admins)
+      .where(eq(admins.username, username))
+      .limit(1);
+    
+    return result.length > 0 ? result[0] : null;
+  } catch (error) {
+    console.error("Error fetching admin:", error);
+    return null;
+  }
+}
+
+// Fungsi untuk mendapatkan users
+export async function getUsers(offset: number = 0): Promise<{
+  users: SelectUser[];
+  totalUsers: number;
+}> {
+  try {
+    const usersPerPage = 10;
+    const totalUsersResult = await db.select({ count: count() }).from(users);
+    const usersList = await db
+      .select()
+      .from(users)
+      .limit(usersPerPage)
+      .offset(offset);
+    
+    return {
+      users: usersList,
+      totalUsers: Number(totalUsersResult[0].count)
+    };
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return {
+      users: [],
+      totalUsers: 0
+    };
+  }
+}
+
+// Fungsi untuk mendapatkan transaksi
+export async function getTransactions(offset: number = 0): Promise<{
+  transactions: SelectTransaksi[];
+  totalTransactions: number;
+}> {
+  try {
+    const transactionsPerPage = 10;
+    const totalTransactionsResult = await db.select({ count: count() }).from(transactions);
+    const transactionsList = await db
+      .select()
+      .from(transactions)
+      .limit(transactionsPerPage)
+      .offset(offset);
+    
+    return {
+      transactions: transactionsList,
+      totalTransactions: Number(totalTransactionsResult[0].count)
+    };
+  } catch (error) {
+    console.error("Error fetching transactions:", error);
+    return {
+      transactions: [],
+      totalTransactions: 0
+    };
+  }
+}
+
+// Fungsi untuk menginisialisasi database jika diperlukan
+export async function initDatabase() {
+  try {
+    // Database sudah ada dan tabel-tabel sudah dibuat sesuai skema SQL yang diberikan
+    // Fungsi ini untuk memastikan koneksi berjalan dengan baik
+    const testConnection = await db.select().from(products).limit(1);
+    console.log('Database connection successful');
+    return { success: true };
+  } catch (error) {
+    console.error('Database initialization error:', error);
+    return { success: false, error };
+  }
 }
