@@ -34,12 +34,21 @@ export function ProductsTable({
   let productsPerPage = 5;
 
   function prevPage() {
-    router.back();
+    // Calculate previous offset (ensure it's not negative)
+    const prevOffset = Math.max(0, offset - productsPerPage);
+    // Navigate to admin page with correct offset
+    router.push(`/admin?offset=${prevOffset}`, { scroll: false });
   }
 
   function nextPage() {
-    router.push(`/?offset=${offset}`, { scroll: false });
+    // Calculate next offset
+    const nextOffset = offset + productsPerPage;
+    // Navigate to admin page with correct offset
+    router.push(`/admin?offset=${nextOffset}`, { scroll: false });
   }
+
+  const start = offset + 1;
+  const end = Math.min(offset + productsPerPage, totalProducts);
 
   return (
     <Card>

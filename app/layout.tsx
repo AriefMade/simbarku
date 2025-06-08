@@ -1,11 +1,14 @@
 import '../styles/globals.css';
-import Navbar from '../components/common/layout/Navbar';
-import Footer from '../components/common/layout/Footer';
+import LayoutWrapper from '../components/common/layout/LayoutWrapper';
+import { Suspense } from 'react';
 
 export const metadata = {
   title: 'Simbarku.co',
   description: 'Tempat jual beli simbar online',
 }
+
+// Use dynamic rendering to avoid hydration errors
+export const dynamic = 'force-dynamic';
 
 export default function RootLayout({
   children,
@@ -15,9 +18,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Navbar />
-        {children}
-        <Footer />
+        <Suspense fallback={null}>
+          <LayoutWrapper>
+            {children}
+          </LayoutWrapper>
+        </Suspense>
       </body>
     </html>
   )

@@ -1,7 +1,7 @@
 "use client"
 import { Disclosure } from '@headlessui/react';
 import Link from 'next/link';
-import React from 'react';
+import React, { useState } from 'react';
 import { Bars3Icon } from '@heroicons/react/24/outline';
 import Drawer from "./Drawer";
 import Drawerdata from "./Drawerdata";
@@ -29,8 +29,7 @@ function classNames(...classes: string[]) {
 }
 
 const Navbar = () => {
-
-    const [isOpen, setIsOpen] = React.useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
     return (
         <Disclosure as="nav" className="navbar">
@@ -40,7 +39,6 @@ const Navbar = () => {
                         <div className="flex flex-1 items-center sm:justify-between">
 
                             {/* LOGO */}
-
                             <div className="flex flex-shrink-0 items-center border-right">
                                 <Link href="/" className='text-2xl sm:text-4xl font-semibold text-black'>
                                     Simbarku.co
@@ -48,7 +46,6 @@ const Navbar = () => {
                             </div>
 
                             {/* LINKS */}
-
                             <div className="hidden lg:flex items-center border-right ">
                                 <div className="flex justify-end space-x-4">
                                     {navigation.map((item) => (
@@ -105,13 +102,13 @@ const Navbar = () => {
                                             <Menu.Item>
                                                 {({ active }) => (
                                                     <Link
-                                                        href="/admin"
+                                                        href="/login"
                                                         className={classNames(
                                                             active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                                             'block px-4 py-2 text-sm'
                                                         )}
                                                     >
-                                                        Admin Panel
+                                                        Admin
                                                     </Link>
                                                 )}
                                             </Menu.Item>
@@ -127,9 +124,11 @@ const Navbar = () => {
                         </div>
 
                         {/* DRAWER LINKS DATA */}
-                        <Drawer isOpen={isOpen} setIsOpen={setIsOpen}>
-                            <Drawerdata />
-                        </Drawer>
+                        {isOpen && (
+                            <Drawer isOpen={isOpen} setIsOpen={setIsOpen}>
+                                <Drawerdata />
+                            </Drawer>
+                        )}
                     </div>
                 </div>
             </>

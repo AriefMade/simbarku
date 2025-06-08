@@ -92,10 +92,11 @@ export async function getProducts(
   offset: number = 0
 ): Promise<{
   products: SelectProduct[];
-  newOffset: number | null;
+  newOffset: number;
   totalProducts: number;
 }> {
   try {
+    const productsPerPage = 5;
     // Searching
     if (search) {
       const filteredProducts = await db
@@ -106,13 +107,12 @@ export async function getProducts(
       
       return {
         products: filteredProducts,
-        newOffset: null,
+        newOffset: offset,
         totalProducts: filteredProducts.length
       };
     }
 
     // Pagination
-    const productsPerPage = 5;
     const totalProductsResult = await db.select({ count: count() }).from(products);
     const totalCount = Number(totalProductsResult[0].count);
     
@@ -126,14 +126,14 @@ export async function getProducts(
 
     return {
       products: moreProducts,
-      newOffset,
+      newOffset : offset,
       totalProducts: totalCount
     };
   } catch (error) {
     console.error("Error fetching products:", error);
     return {
       products: [],
-      newOffset: null,
+      newOffset: 0,
       totalProducts: 0
     };
   }

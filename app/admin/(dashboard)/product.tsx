@@ -1,7 +1,7 @@
 'use client';
 
-import { SelectProduct } from '@/lib/db-types';  // Perbaiki import
-import { formatPrice } from '@/lib/db-client';  // Perbaiki import
+import { SelectProduct } from '@/lib/db-types';
+import { formatPrice } from '@/lib/db-client'; 
 import { TableCell, TableRow } from '@/components/common/ui/ui/table';
 import Image from 'next/image';
 import { Button } from '@/components/common/ui/ui/button';
