@@ -5,9 +5,9 @@ import Featured from '../components/features/Featured/index';
 import FAQ from '@/components/features/sections/FAQ/Faq';
 import Testimonials from '../components/features/sections/Testimonials/index';
 import Insta from '../components/features/Insta/index';
-import Shop from '../components/features/Product Display/shop';
-import Supplies from '../components/features/Product Display/supplies';
-import Accesories from '../components/features/Product Display/accesories';
+// import Shop from '../pages/shop';
+// import Supplies from '../pages/supplies';
+// import Accesories from '../pages/accesories';
 
 
 export default function Home() {
@@ -15,9 +15,9 @@ export default function Home() {
     <main>
       <Banner />
       <Product />
-      <Shop />
-      <Supplies />
-      <Accesories />
+      {/* <Shop /> */}
+      {/* <Supplies />
+      <Accesories /> */}
       <AboutUs />
       <FAQ />
       <Testimonials />
