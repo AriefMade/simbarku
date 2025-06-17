@@ -13,6 +13,8 @@ interface DataType {
     name: string;
 }
 
+
+// Nama disesuaikan dengan di database
 const postData: DataType[] = [
     {
         name: "Robert Fox",

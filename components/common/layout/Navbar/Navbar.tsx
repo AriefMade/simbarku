@@ -18,7 +18,7 @@ interface NavigationItem {
 
 const navigation: NavigationItem[] = [
     { name: 'About Us', href: '#aboutus-section', current: false },
-    { name: 'Product', href: '#services-section', current: false },
+    { name: 'Product', href: '#product-section', current: false },
     { name: 'FAQ', href: '#faq-section', current: false },
     { name: 'Testimonial', href: '#testimonial-section', current: false },
     { name: 'Discussion', href: '#blog-section', current: false },
@@ -32,7 +32,7 @@ const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <Disclosure as="nav" className="navbar">
+        <Disclosure as="nav" className="fixed top-0 left-0 w-full z-50 bg-white ">
             <>
                 <div className="mx-auto max-w-7xl p-3 md:p-4 lg:px-8">
                     <div className="relative flex h-12 sm:h-20 items-center">

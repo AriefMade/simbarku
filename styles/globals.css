@@ -189,7 +189,8 @@ html {
 }
 
 .faq-bg {
-  background-image: url('/images/faq/swirl.png');
+  background-color: #dbdbdb;
+  /* background-image: url('/images/faq/swirl.png'); */
   background-repeat: no-repeat;
   background-size: cover;
 }
