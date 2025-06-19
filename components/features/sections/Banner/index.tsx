@@ -12,7 +12,7 @@ const Banner = () => {
         </h1>
         <a
           href="#product-section"
-          className="mt-8 inline-block text-sm md:text-xl font-semibold hover:shadow-xl bg-brightblue text-white py-3 px-6 md:py-5 md:px-14 rounded-full hover:bg-hoblue"
+          className="mt-8 inline-block text-sm md:text-xl font-semibold hover:shadow-xl bg-[#007BFF] text-white py-3 px-6 md:py-5 md:px-14 rounded-full hover:bg-hoblue"
         >
           Get Started
         </a>

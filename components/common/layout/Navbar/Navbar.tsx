@@ -21,7 +21,7 @@ const navigation: NavigationItem[] = [
     { name: 'Product', href: '#product-section', current: false },
     { name: 'FAQ', href: '#faq-section', current: false },
     { name: 'Testimonial', href: '#testimonial-section', current: false },
-    { name: 'Discussion', href: '#blog-section', current: false },
+    { name: 'Discussion', href: '#discussion-section', current: false },
 ]
 
 function classNames(...classes: string[]) {
@@ -32,7 +32,7 @@ const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <Disclosure as="nav" className="fixed top-0 left-0 w-full z-50 bg-white ">
+        <Disclosure as="nav" className="fixed top-0 left-0 w-full z-50 bg-[#007BFF] shadow-md">
             <>
                 <div className="mx-auto max-w-7xl p-3 md:p-4 lg:px-8">
                     <div className="relative flex h-12 sm:h-20 items-center">
@@ -40,7 +40,7 @@ const Navbar = () => {
 
                             {/* LOGO */}
                             <div className="flex flex-shrink-0 items-center border-right">
-                                <Link href="/" className='text-2xl sm:text-4xl font-semibold text-black'>
+                                <Link href="/" className='text-2xl sm:text-4xl font-semibold text-white '>
                                     Simbarku.co
                                 </Link>
                             </div>
@@ -53,7 +53,7 @@ const Navbar = () => {
                                             key={item.name}
                                             href={item.href}
                                             className={classNames(
-                                                item.current ? 'bg-gray-900' : 'navlinks hover:text-black',
+                                                item.current ? 'bg-gray-900' : 'navlinks hover:text-white',
                                                 'px-3 py-4 rounded-md text-lg font-normal'
                                             )}
                                             aria-current={item.href ? 'page' : undefined}
@@ -67,7 +67,7 @@ const Navbar = () => {
                             {/* Contact Us Dropdown with Admin Access */}
                             <Menu as="div" className="relative inline-block text-left">
                                 <div>
-                                    <Menu.Button className="hidden lg:flex justify-end text-xl font-semibold bg-transparent py-4 px-6 lg:px-12 navbutton rounded-full hover:bg-navyblue hover:text-white">
+                                    <Menu.Button className="hidden lg:flex justify-end text-xl font-semibold bg-transparent py-4 px-6 lg:px-12 navbutton rounded-full hover:bg-white hover:text-black">
                                         Contact Us
                                         <ChevronDownIcon
                                             className="ml-2 -mr-1 h-5 w-5"

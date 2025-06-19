@@ -36,7 +36,7 @@ const Product = () => {
         <div id="product-section">
             <div className='mx-auto max-w-7xl px-4 py-24 my-32 lg:px-10 bg-lightgrey rounded-3xl relative'>
                 <Image src="/images/aboutus/dots.svg" width={100} height={100} alt="dots-image" className="absolute bottom-1 -left-20" />
-                <h3 className='text-center text-blue text-lg tracking-widest'>Our Product</h3>
+                <h3 className='text-center text-[#007BFF] font-sans font-semibold text-lg tracking-widest'>Our Product</h3>
                 <h3 className="text-center text-4xl sm:text-6xl font-bold">Know more about our product.</h3>
                 <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 my-16 gap-x-16 lg:gap-x-32'>
                     {Aboutdata.map((item, i) => (

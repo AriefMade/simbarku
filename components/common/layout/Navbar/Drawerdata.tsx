@@ -15,6 +15,7 @@ const navigation: NavigationItem[] = [
   { name: 'FAQ', href: '#faq-section' },
   // { name: 'Shop', href: '#shop-section' },
   { name: 'Testimonial', href: '#testimonial-section' },
+  {name: 'Discussion', href: '#discussion-section' },
   { name: 'Contact Us', href: '/contact' },
   { name: 'Admin', href: '/login' },
 ];

@@ -5,6 +5,9 @@ import Featured from '../components/features/Featured/index';
 import FAQ from '@/components/features/sections/FAQ/Faq';
 import Testimonials from '../components/features/sections/Testimonials/index';
 import Insta from '../components/features/Insta/index';
+import Navbar from '@/components/common/layout/Navbar';
+import Footer from '@/components/common/layout/Footer';
+import ForumPage from '@/components/features/sections/Forum';
 // import Shop from '../pages/shop';
 // import Supplies from '../pages/supplies';
 // import Accesories from '../pages/accesories';
@@ -13,6 +16,7 @@ import Insta from '../components/features/Insta/index';
 export default function Home() {
   return (
     <main>
+      <Navbar />
       <Banner />
       <Product />
       {/* <Shop /> */}
@@ -21,8 +25,10 @@ export default function Home() {
       <AboutUs />
       <FAQ />
       <Testimonials />
-      <Featured />
+      {/* <Featured /> */}
+      <ForumPage/>
       <Insta />
+      <Footer />
     </main>
   )
 }
