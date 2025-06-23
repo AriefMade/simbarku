@@ -32,7 +32,7 @@ const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <Disclosure as="nav" className="fixed top-0 left-0 w-full z-50 bg-[#007BFF] shadow-md">
+        <Disclosure as="nav" className="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
             <>
                 <div className="mx-auto max-w-7xl p-3 md:p-4 lg:px-8">
                     <div className="relative flex h-12 sm:h-20 items-center">
@@ -40,7 +40,7 @@ const Navbar = () => {
 
                             {/* LOGO */}
                             <div className="flex flex-shrink-0 items-center border-right">
-                                <Link href="/" className='text-2xl sm:text-4xl font-semibold text-white '>
+                                <Link href="/" className='text-2xl sm:text-4xl font-semibold text-black '>
                                     Simbarku.co
                                 </Link>
                             </div>

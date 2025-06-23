@@ -21,6 +21,21 @@
       "static/chunks/main-app.js",
       "static/chunks/app/supplies/layout.js"
     ],
+    "/checkout/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/checkout/page.js"
+    ],
+    "/shop/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/shop/page.js"
+    ],
+    "/shop/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/shop/layout.js"
+    ],
     "/accesories/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
