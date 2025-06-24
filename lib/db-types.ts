@@ -40,7 +40,9 @@ export interface SelectTestimoni {
 
 export interface SelectTransaksi {
   id_transaksi: number;
-  nama: number;
-  harga: number;
+  id_user: number;  // Sebelumnya 'nama'
+  harga: number | string;
   tanggal: Date | string;
+  status: 'completed' | 'pending' | 'canceled';
+  userName: string | null;
 }

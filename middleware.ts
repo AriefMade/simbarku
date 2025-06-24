@@ -1,26 +1,20 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 
-// This middleware function handles authentication checks
+// This middleware runs in the Edge Runtime - no native Node modules allowed
 export default auth((req) => {
-  // Get the path from the URL
-  const { pathname } = req.nextUrl;
+  const { nextUrl } = req;
+  const isLoggedIn = !!req.auth;
   
-  // Check if this is an admin route
-  const isAdminPath = pathname.startsWith('/admin');
-  
-  // If trying to access admin routes and not authenticated, redirect to login
-  if (isAdminPath && !req.auth) {
-    // Store the original URL to redirect back after login
-    const redirectUrl = new URL('/login', req.url);
-    redirectUrl.searchParams.set('callbackUrl', pathname);
-    return NextResponse.redirect(redirectUrl);
+  // Protect admin routes
+  if (nextUrl.pathname.startsWith('/admin') && !isLoggedIn) {
+    return NextResponse.redirect(new URL('/login?callbackUrl=' + encodeURIComponent(nextUrl.pathname), nextUrl));
   }
   
   return NextResponse.next();
 });
 
-// Configure matcher for paths that should trigger this middleware
+// Only run middleware for admin and login routes
 export const config = {
-  matcher: ['/admin', '/admin/:path*']
+  matcher: ['/admin/:path*', '/login']
 };

@@ -17,9 +17,10 @@ export interface DataType {
 interface MultipleItemsProps {
   title: string;
   data: DataType[];
+  onBuy: (item: DataType) => void;
 }
 
-const MultipleItems = ({ title, data }: MultipleItemsProps) => {
+const MultipleItems = ({ title, data, onBuy }: MultipleItemsProps) => {
   const settings = {
     dots: false,
     infinite: true,
@@ -60,6 +61,13 @@ const MultipleItems = ({ title, data }: MultipleItemsProps) => {
                 <span className="absolute bottom-16 right-4 bg-[#007BFF] text-white text-sm font-semibold px-4 py-1 rounded-full shadow">
                   Rp {Number(item.price).toLocaleString('id-ID')}
                 </span>
+                <button
+                  type="button"
+                  className="absolute bottom-4 right-4 bg-[#007BFF] text-white hover:shadow-xl py-2 px-4 rounded-full text-sm"
+                  onClick={() => onBuy?.(item)}
+                >
+                  Buy
+                </button>
                 <Link href="/" className="absolute bottom-4 right-4">
                   <h3 className="bg-[#007BFF] text-white  hover:shadow-xl py-2 px-4 rounded-full text-sm">
                     Buy

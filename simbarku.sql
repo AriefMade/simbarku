@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 12, 2025 at 04:42 AM
+-- Generation Time: Jun 21, 2025 at 09:12 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -30,7 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `admin` (
   `id_user` int NOT NULL,
   `username` varchar(20) NOT NULL,
-  `password` varchar(15) NOT NULL
+  `password` varchar(60) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -38,6 +38,7 @@ CREATE TABLE `admin` (
 --
 
 INSERT INTO `admin` (`id_user`, `username`, `password`) VALUES
+(1, 'arief', 'arief123'),
 (2, 'I Gusti Ngurah Artha', 'bali123'),
 (3, 'I Wayan Adiwiyata', 'bali123'),
 (4, 'I Ketut Sudarsana', 'bali123'),
@@ -78,6 +79,7 @@ CREATE TABLE `products` (
   `id` int NOT NULL,
   `image_url` text NOT NULL,
   `name` text NOT NULL,
+  `kategori` varchar(100) NOT NULL,
   `status` enum('active','inactive','archived') NOT NULL,
   `price` decimal(10,2) NOT NULL,
   `stock` int NOT NULL,
@@ -88,47 +90,47 @@ CREATE TABLE `products` (
 -- Dumping data for table `products`
 --
 
-INSERT INTO `products` (`id`, `image_url`, `name`, `status`, `price`, `stock`, `available_at`) VALUES
-(1, '/products/platycerium-andinum.jpg', 'Platycerium Andinum', 'active', '139763.00', 16, '2025-04-02 09:51:23'),
-(2, '/products/platycerium-bifurcatum.jpg', 'Platycerium Bifurcatum', 'active', '93168.00', 8, '2024-12-07 18:25:02'),
-(3, '/products/platycerium-veitchii.jpg', 'Platycerium Veitchii', 'archived', '275679.00', 17, '2024-08-28 04:58:12'),
-(4, '/products/platycerium-hillii.jpg', 'Platycerium Hillii', 'active', '234105.00', 16, '2025-03-28 20:00:14'),
-(5, '/products/platycerium-elephantotis.jpg', 'Platycerium Elephantotis', 'inactive', '143985.00', 7, '2025-05-09 05:11:22'),
-(6, '/products/platycerium-coronarium.jpg', 'Platycerium Coronarium', 'active', '96003.00', 5, '2024-06-21 09:10:31'),
-(7, '/products/platycerium-ridleyi.jpg', 'Platycerium Ridleyi', 'inactive', '245677.00', 20, '2024-09-24 08:19:33'),
-(8, '/products/platycerium-superbum.jpg', 'Platycerium Superbum', 'inactive', '79018.00', 17, '2024-10-01 07:27:56'),
-(9, '/products/platycerium-grande.jpg', 'Platycerium Grande', 'archived', '226726.00', 1, '2024-11-15 23:59:29'),
-(10, '/products/platycerium-stemaria.jpg', 'Platycerium Stemaria', 'inactive', '140211.00', 13, '2025-02-12 09:48:38'),
-(11, '/products/platycerium-vassei.jpg', 'Platycerium Vassei', 'archived', '214472.00', 1, '2025-02-07 06:22:05'),
-(12, '/products/platycerium-madagascariensis.jpg', 'Platycerium Madagascariensis', 'inactive', '88628.00', 3, '2024-06-12 21:40:38'),
-(13, '/products/platycerium-alcicorne.jpg', 'Platycerium Alcicorne', 'archived', '234722.00', 15, '2024-12-09 03:03:38'),
-(14, '/products/platycerium-wallichii.jpg', 'Platycerium Wallichii', 'archived', '208217.00', 4, '2024-12-17 17:59:25'),
-(15, '/products/platycerium-holttumii.jpg', 'Platycerium Holttumii', 'archived', '168660.00', 17, '2024-12-22 16:45:06'),
-(16, '/products/platycerium-quadridichotomum.jpg', 'Platycerium Quadridichotomum', 'archived', '141936.00', 6, '2024-07-25 01:56:48'),
-(17, '/products/platycerium-mayii.jpg', 'Platycerium Mayii', 'inactive', '208085.00', 16, '2024-12-21 00:15:31'),
-(18, '/products/platycerium-mountlewis.jpg', 'Platycerium MountLewis', 'archived', '114982.00', 11, '2025-05-07 10:49:59'),
-(19, '/products/platycerium-wandae.jpg', 'Platycerium Wandae', 'active', '131581.00', 2, '2024-10-27 23:52:53'),
-(20, '/products/platycerium-elephantotis-variegata.jpg', 'Platycerium Elephantotis Variegata', 'inactive', '97063.00', 1, '2025-04-25 18:37:15'),
-(21, '/products/platycerium-andinum.jpg', 'Platycerium Andinum', 'active', '139763.00', 16, '2025-04-02 09:51:23'),
-(22, '/products/platycerium-bifurcatum.jpg', 'Platycerium Bifurcatum', 'active', '93168.00', 8, '2024-12-07 18:25:02'),
-(23, '/products/platycerium-veitchii.jpg', 'Platycerium Veitchii', 'archived', '275679.00', 17, '2024-08-28 04:58:12'),
-(24, '/products/platycerium-hillii.jpg', 'Platycerium Hillii', 'active', '234105.00', 16, '2025-03-28 20:00:14'),
-(25, '/products/platycerium-elephantotis.jpg', 'Platycerium Elephantotis', 'inactive', '143985.00', 7, '2025-05-09 05:11:22'),
-(26, '/products/platycerium-coronarium.jpg', 'Platycerium Coronarium', 'active', '96003.00', 5, '2024-06-21 09:10:31'),
-(27, '/products/platycerium-ridleyi.jpg', 'Platycerium Ridleyi', 'inactive', '245677.00', 20, '2024-09-24 08:19:33'),
-(28, '/products/platycerium-superbum.jpg', 'Platycerium Superbum', 'inactive', '79018.00', 17, '2024-10-01 07:27:56'),
-(29, '/products/platycerium-grande.jpg', 'Platycerium Grande', 'archived', '226726.00', 1, '2024-11-15 23:59:29'),
-(30, '/products/platycerium-stemaria.jpg', 'Platycerium Stemaria', 'inactive', '140211.00', 13, '2025-02-12 09:48:38'),
-(31, '/products/platycerium-vassei.jpg', 'Platycerium Vassei', 'archived', '214472.00', 1, '2025-02-07 06:22:05'),
-(32, '/products/platycerium-madagascariensis.jpg', 'Platycerium Madagascariensis', 'inactive', '88628.00', 3, '2024-06-12 21:40:38'),
-(33, '/products/platycerium-alcicorne.jpg', 'Platycerium Alcicorne', 'archived', '234722.00', 15, '2024-12-09 03:03:38'),
-(34, '/products/platycerium-wallichii.jpg', 'Platycerium Wallichii', 'archived', '208217.00', 4, '2024-12-17 17:59:25'),
-(35, '/products/platycerium-holttumii.jpg', 'Platycerium Holttumii', 'archived', '168660.00', 17, '2024-12-22 16:45:06'),
-(36, '/products/platycerium-quadridichotomum.jpg', 'Platycerium Quadridichotomum', 'archived', '141936.00', 6, '2024-07-25 01:56:48'),
-(37, '/products/platycerium-mayii.jpg', 'Platycerium Mayii', 'inactive', '208085.00', 16, '2024-12-21 00:15:31'),
-(38, '/products/platycerium-mountlewis.jpg', 'Platycerium MountLewis', 'archived', '114982.00', 11, '2025-05-07 10:49:59'),
-(39, '/products/platycerium-wandae.jpg', 'Platycerium Wandae', 'active', '131581.00', 2, '2024-10-27 23:52:53'),
-(40, '/products/platycerium-elephantotis-variegata.jpg', 'Platycerium Elephantotis Variegata', 'inactive', '97063.00', 1, '2025-04-25 18:37:15');
+INSERT INTO `products` (`id`, `image_url`, `name`, `kategori`, `status`, `price`, `stock`, `available_at`) VALUES
+(1, '/products/platycerium-andinum.jpg', 'Platycerium Andinum', '', 'active', '139763.00', 16, '2025-04-02 09:51:23'),
+(2, '/products/platycerium-bifurcatum.jpg', 'Platycerium Bifurcatum', '', 'active', '93168.00', 8, '2024-12-07 18:25:02'),
+(3, '/products/platycerium-veitchii.jpg', 'Platycerium Veitchii', '', 'archived', '275679.00', 17, '2024-08-28 04:58:12'),
+(4, '/products/platycerium-hillii.jpg', 'Platycerium Hillii', '', 'active', '234105.00', 16, '2025-03-28 20:00:14'),
+(5, '/products/platycerium-elephantotis.jpg', 'Platycerium Elephantotis', '', 'inactive', '143985.00', 7, '2025-05-09 05:11:22'),
+(6, '/products/platycerium-coronarium.jpg', 'Platycerium Coronarium', '', 'active', '96003.00', 5, '2024-06-21 09:10:31'),
+(7, '/products/platycerium-ridleyi.jpg', 'Platycerium Ridleyi', '', 'inactive', '245677.00', 20, '2024-09-24 08:19:33'),
+(8, '/products/platycerium-superbum.jpg', 'Platycerium Superbum', '', 'inactive', '79018.00', 17, '2024-10-01 07:27:56'),
+(9, '/products/platycerium-grande.jpg', 'Platycerium Grande', '', 'archived', '226726.00', 1, '2024-11-15 23:59:29'),
+(10, '/products/platycerium-stemaria.jpg', 'Platycerium Stemaria', '', 'inactive', '140211.00', 13, '2025-02-12 09:48:38'),
+(11, '/products/platycerium-vassei.jpg', 'Platycerium Vassei', '', 'archived', '214472.00', 1, '2025-02-07 06:22:05'),
+(12, '/products/platycerium-madagascariensis.jpg', 'Platycerium Madagascariensis', '', 'inactive', '88628.00', 3, '2024-06-12 21:40:38'),
+(13, '/products/platycerium-alcicorne.jpg', 'Platycerium Alcicorne', '', 'archived', '234722.00', 15, '2024-12-09 03:03:38'),
+(14, '/products/platycerium-wallichii.jpg', 'Platycerium Wallichii', '', 'archived', '208217.00', 4, '2024-12-17 17:59:25'),
+(15, '/products/platycerium-holttumii.jpg', 'Platycerium Holttumii', '', 'archived', '168660.00', 17, '2024-12-22 16:45:06'),
+(16, '/products/platycerium-quadridichotomum.jpg', 'Platycerium Quadridichotomum', '', 'archived', '141936.00', 6, '2024-07-25 01:56:48'),
+(17, '/products/platycerium-mayii.jpg', 'Platycerium Mayii', '', 'inactive', '208085.00', 16, '2024-12-21 00:15:31'),
+(18, '/products/platycerium-mountlewis.jpg', 'Platycerium MountLewis', '', 'archived', '114982.00', 11, '2025-05-07 10:49:59'),
+(19, '/products/platycerium-wandae.jpg', 'Platycerium Wandae', '', 'active', '131581.00', 2, '2024-10-27 23:52:53'),
+(20, '/products/platycerium-elephantotis-variegata.jpg', 'Platycerium Elephantotis Variegata', '', 'inactive', '97063.00', 1, '2025-04-25 18:37:15'),
+(21, '/products/platycerium-andinum.jpg', 'Platycerium Andinum', '', 'active', '139763.00', 16, '2025-04-02 09:51:23'),
+(22, '/products/platycerium-bifurcatum.jpg', 'Platycerium Bifurcatum', '', 'active', '93168.00', 8, '2024-12-07 18:25:02'),
+(23, '/products/platycerium-veitchii.jpg', 'Platycerium Veitchii', '', 'archived', '275679.00', 17, '2024-08-28 04:58:12'),
+(24, '/products/platycerium-hillii.jpg', 'Platycerium Hillii', '', 'active', '234105.00', 16, '2025-03-28 20:00:14'),
+(25, '/products/platycerium-elephantotis.jpg', 'Platycerium Elephantotis', '', 'inactive', '143985.00', 7, '2025-05-09 05:11:22'),
+(26, '/products/platycerium-coronarium.jpg', 'Platycerium Coronarium', '', 'active', '96003.00', 5, '2024-06-21 09:10:31'),
+(27, '/products/platycerium-ridleyi.jpg', 'Platycerium Ridleyi', '', 'inactive', '245677.00', 20, '2024-09-24 08:19:33'),
+(28, '/products/platycerium-superbum.jpg', 'Platycerium Superbum', '', 'inactive', '79018.00', 17, '2024-10-01 07:27:56'),
+(29, '/products/platycerium-grande.jpg', 'Platycerium Grande', '', 'archived', '226726.00', 1, '2024-11-15 23:59:29'),
+(30, '/products/platycerium-stemaria.jpg', 'Platycerium Stemaria', '', 'inactive', '140211.00', 13, '2025-02-12 09:48:38'),
+(31, '/products/platycerium-vassei.jpg', 'Platycerium Vassei', '', 'archived', '214472.00', 1, '2025-02-07 06:22:05'),
+(32, '/products/platycerium-madagascariensis.jpg', 'Platycerium Madagascariensis', '', 'inactive', '88628.00', 3, '2024-06-12 21:40:38'),
+(33, '/products/platycerium-alcicorne.jpg', 'Platycerium Alcicorne', '', 'archived', '234722.00', 15, '2024-12-09 03:03:38'),
+(34, '/products/platycerium-wallichii.jpg', 'Platycerium Wallichii', '', 'archived', '208217.00', 4, '2024-12-17 17:59:25'),
+(35, '/products/platycerium-holttumii.jpg', 'Platycerium Holttumii', '', 'archived', '168660.00', 17, '2024-12-22 16:45:06'),
+(36, '/products/platycerium-quadridichotomum.jpg', 'Platycerium Quadridichotomum', '', 'archived', '141936.00', 6, '2024-07-25 01:56:48'),
+(37, '/products/platycerium-mayii.jpg', 'Platycerium Mayii', '', 'inactive', '208085.00', 16, '2024-12-21 00:15:31'),
+(38, '/products/platycerium-mountlewis.jpg', 'Platycerium MountLewis', '', 'archived', '114982.00', 11, '2025-05-07 10:49:59'),
+(39, '/products/platycerium-wandae.jpg', 'Platycerium Wandae', '', 'active', '131581.00', 2, '2024-10-27 23:52:53'),
+(40, '/products/platycerium-elephantotis-variegata.jpg', 'Platycerium Elephantotis Variegata', '', 'inactive', '97063.00', 1, '2025-04-25 18:37:15');
 
 -- --------------------------------------------------------
 
@@ -187,46 +189,47 @@ INSERT INTO `testimoni` (`id_testimoni`, `nama`, `deskripsi`, `rating`) VALUES
 
 CREATE TABLE `transaksi` (
   `id_transaksi` int NOT NULL,
-  `nama` int NOT NULL,
+  `id_user` int NOT NULL,
   `harga` int NOT NULL,
-  `tanggal` date NOT NULL
+  `tanggal` date NOT NULL,
+  `status` enum('completed','pending','canceled') NOT NULL DEFAULT 'pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `transaksi`
 --
 
-INSERT INTO `transaksi` (`id_transaksi`, `nama`, `harga`, `tanggal`) VALUES
-(1, 3, 135660, '2024-09-05'),
-(2, 5, 202022, '2024-09-10'),
-(3, 2, 228317, '2025-03-01'),
-(4, 5, 111909, '2024-10-17'),
-(5, 3, 214816, '2025-01-29'),
-(6, 2, 201222, '2024-08-08'),
-(7, 3, 173600, '2025-05-08'),
-(8, 3, 281953, '2024-09-22'),
-(9, 5, 245735, '2024-10-29'),
-(10, 4, 289055, '2024-09-12'),
-(11, 3, 160610, '2025-03-15'),
-(12, 1, 205303, '2025-02-16'),
-(13, 1, 108886, '2025-03-21'),
-(14, 3, 186165, '2024-07-03'),
-(15, 1, 294324, '2024-12-19'),
-(16, 3, 144429, '2024-11-26'),
-(17, 1, 107420, '2025-01-17'),
-(18, 1, 116374, '2024-06-01'),
-(19, 4, 127729, '2025-04-26'),
-(20, 4, 268426, '2024-10-18'),
-(21, 4, 175952, '2024-10-09'),
-(22, 3, 166390, '2024-11-25'),
-(23, 1, 260834, '2024-06-18'),
-(24, 2, 101356, '2024-06-13'),
-(25, 2, 213823, '2024-08-12'),
-(26, 1, 272973, '2024-11-21'),
-(27, 3, 274323, '2024-07-04'),
-(28, 1, 237692, '2025-05-21'),
-(29, 5, 140419, '2024-11-27'),
-(30, 4, 148240, '2024-09-05');
+INSERT INTO `transaksi` (`id_transaksi`, `id_user`, `harga`, `tanggal`, `status`) VALUES
+(1, 3, 135660, '2024-09-05', 'completed'),
+(2, 5, 202022, '2024-09-10', 'completed'),
+(3, 2, 228317, '2025-03-01', 'completed'),
+(4, 5, 111909, '2024-10-17', 'completed'),
+(5, 3, 214816, '2025-01-29', 'completed'),
+(6, 2, 201222, '2024-08-08', 'completed'),
+(7, 3, 173600, '2025-05-08', 'completed'),
+(8, 3, 281953, '2024-09-22', 'completed'),
+(9, 5, 245735, '2024-10-29', 'completed'),
+(10, 4, 289055, '2024-09-12', 'completed'),
+(11, 3, 160610, '2025-03-15', 'completed'),
+(12, 1, 205303, '2025-02-16', 'completed'),
+(13, 1, 108886, '2025-03-21', 'completed'),
+(14, 3, 186165, '2024-07-03', 'completed'),
+(15, 1, 294324, '2024-12-19', 'completed'),
+(16, 3, 144429, '2024-11-26', 'pending'),
+(17, 1, 107420, '2025-01-17', 'pending'),
+(18, 1, 116374, '2024-06-01', 'pending'),
+(19, 4, 127729, '2025-04-26', 'pending'),
+(20, 4, 268426, '2024-10-18', 'pending'),
+(21, 4, 175952, '2024-10-09', 'pending'),
+(22, 3, 166390, '2024-11-25', 'pending'),
+(23, 1, 260834, '2024-06-18', 'pending'),
+(24, 2, 101356, '2024-06-13', 'pending'),
+(25, 2, 213823, '2024-08-12', 'pending'),
+(26, 1, 272973, '2024-11-21', 'canceled'),
+(27, 3, 274323, '2024-07-04', 'canceled'),
+(28, 1, 237692, '2025-05-21', 'canceled'),
+(29, 5, 140419, '2024-11-27', 'canceled'),
+(30, 4, 148240, '2024-09-05', 'canceled');
 
 -- --------------------------------------------------------
 
@@ -285,7 +288,8 @@ ALTER TABLE `testimoni`
 -- Indexes for table `transaksi`
 --
 ALTER TABLE `transaksi`
-  ADD PRIMARY KEY (`id_transaksi`);
+  ADD PRIMARY KEY (`id_transaksi`),
+  ADD KEY `fk_transaksi_user` (`id_user`);
 
 --
 -- Indexes for table `user`
@@ -301,7 +305,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `admin`
 --
 ALTER TABLE `admin`
-  MODIFY `id_user` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_user` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `forum`
@@ -332,6 +336,16 @@ ALTER TABLE `transaksi`
 --
 ALTER TABLE `user`
   MODIFY `id_user` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `transaksi`
+--
+ALTER TABLE `transaksi`
+  ADD CONSTRAINT `fk_transaksi_user` FOREIGN KEY (`id_user`) REFERENCES `user` (`id_user`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

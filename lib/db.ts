@@ -12,8 +12,9 @@ import {
   binary,
   date
 } from 'drizzle-orm/mysql-core';
-import { count, eq, like } from 'drizzle-orm';
+import { count, eq, like, desc, sql, inArray } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
+
 
 // Konfigurasi koneksi MySQL menggunakan variabel lingkungan
 const connection = mysql.createPool({
@@ -39,7 +40,7 @@ export const products = mysqlTable('products', {
 
 // Definisi tabel admin
 export const admins = mysqlTable('admin', {
-  id_user: int('id_user').primaryKey().autoincrement(),  // Gunakan id_user sesuai database
+  id_user: int('id_user').primaryKey().autoincrement(),
   username: varchar('username', { length: 20 }).notNull(),
   password: varchar('password', { length: 15 }).notNull()
 });
@@ -62,17 +63,18 @@ export const testimonials = mysqlTable('testimoni', {
 
 // Definisi tabel transaksi
 export const transactions = mysqlTable('transaksi', {
-  idTransaksi: int('id_transaksi').primaryKey().autoincrement(),
-  nama: int('nama').notNull(),
+  id_transaksi: int('id_transaksi').primaryKey().autoincrement(),
+  id_user: int('id_user').notNull().references(() => users.idUser),
   harga: int('harga').notNull(),
-  tanggal: date('tanggal').notNull()
+  tanggal: date('tanggal').notNull(),
+  status: mysqlEnum('status', ['completed', 'pending', 'canceled']).notNull().default('pending')
 });
 
 // Definisi tabel user
 export const users = mysqlTable('user', {
   idUser: int('id_user').primaryKey().autoincrement(),
   nama: varchar('nama', { length: 30 }).notNull(),
-  noTelp: int('no_telp').notNull(),
+  no_telp: int('no_telp').notNull(),
   alamat: text('alamat').notNull(),
   email: text('email').notNull()
 });
@@ -201,18 +203,64 @@ export async function getTransactions(offset: number = 0): Promise<{
   try {
     const transactionsPerPage = 10;
     const totalTransactionsResult = await db.select({ count: count() }).from(transactions);
+    
     const transactionsList = await db
       .select()
       .from(transactions)
       .limit(transactionsPerPage)
-      .offset(offset);
+      .offset(offset)
+      .orderBy(desc(transactions.tanggal));
     
     return {
-      transactions: transactionsList,
+      transactions: transactionsList.map(t => ({
+        ...t,
+        status: t.status || 'pending' // Pastikan selalu ada status
+      })),
       totalTransactions: Number(totalTransactionsResult[0].count)
     };
   } catch (error) {
     console.error("Error fetching transactions:", error);
+    return {
+      transactions: [],
+      totalTransactions: 0
+    };
+  }
+}
+
+// Fungsi untuk mendapatkan transaksi dengan data user
+export async function getTransactionsWithUserData(offset: number = 0): Promise<{
+  transactions: (SelectTransaksi & { userName: string })[];
+  totalTransactions: number;
+}> {
+  try {
+    const transactionsPerPage = 10;
+    const totalTransactionsResult = await db.select({ count: count() }).from(transactions);
+    
+    // Query dengan join untuk mendapatkan nama user
+    const result = await db
+      .select({
+        id_transaksi: transactions.id_transaksi,
+        id_user: transactions.id_user,
+        harga: transactions.harga,
+        tanggal: transactions.tanggal,
+        status: transactions.status,
+        userName: users.nama
+      })
+      .from(transactions)
+      .leftJoin(users, eq(transactions.id_user, users.idUser))
+      .limit(transactionsPerPage)
+      .offset(offset)
+      .orderBy(desc(transactions.tanggal));
+    
+    return {
+      transactions: result.map(tx => ({
+        ...tx,
+        userName: tx.userName || 'Pengguna Tidak Dikenal'
+      })),
+      totalTransactions: Number(totalTransactionsResult[0].count)
+    };
+  } catch (error) {
+    console.error("Error fetching transactions with user data:", error);
     return {
       transactions: [],
       totalTransactions: 0
@@ -231,5 +279,139 @@ export async function initDatabase() {
   } catch (error) {
     console.error('Database initialization error:', error);
     return { success: false, error };
+  }
+}
+
+// Tambahkan fungsi ini ke file db.ts
+export async function updateAdminPassword(id: number, hashedPassword: string) {
+  try {
+    await db
+      .update(admins)
+      .set({ password: hashedPassword })
+      .where(eq(admins.id_user, id));
+    
+    return true;
+  } catch (error) {
+    console.error("Error updating admin password:", error);
+    throw error;
+  }
+}
+
+// Fungsi untuk mendapatkan data analytics transaksi
+export async function getTransactionAnalytics() {
+  try {
+    // Data transaksi per bulan (untuk 12 bulan terakhir)
+    const monthlyTransactions = await db.select({
+      month: sql`DATE_FORMAT(tanggal, '%Y-%m')`,
+      total: sql`COUNT(id_transaksi)`,
+      revenue: sql`SUM(harga)`,
+    })
+    .from(transactions)
+    .groupBy(sql`DATE_FORMAT(tanggal, '%Y-%m')`)
+    .orderBy(sql`DATE_FORMAT(tanggal, '%Y-%m')`)
+    .limit(12);
+    
+    // Data transaksi per status
+    const transactionsByStatus = await db.select({
+      status: transactions.status,
+      count: count(),
+      revenue: sql`SUM(harga)`,
+    })
+    .from(transactions)
+    .groupBy(transactions.status);
+    
+    // Data top 5 pelanggan dengan transaksi tertinggi
+    const topCustomers = await db.select({
+      id_user: transactions.id_user,
+      totalPurchases: count(),
+      totalSpent: sql`SUM(harga)`,
+    })
+    .from(transactions)
+    .where(eq(transactions.status, 'completed'))
+    .groupBy(transactions.id_user)
+    .orderBy(desc(sql`SUM(harga)`))
+    .limit(5);
+    
+    return {
+      monthlyTransactions,
+      transactionsByStatus,
+      topCustomers
+    };
+  } catch (error) {
+    console.error("Error fetching transaction analytics:", error);
+    return {
+      monthlyTransactions: [],
+      transactionsByStatus: [],
+      topCustomers: []
+    };
+  }
+}
+
+// Fungsi untuk mendapatkan data user berdasarkan array ID
+export async function getUsersByIds(userIds: number[]) {
+  try {
+    if (userIds.length === 0) return [];
+    
+    const usersList = await db.select()
+      .from(users)
+      .where(inArray(users.idUser, userIds));
+    
+    return usersList;
+  } catch (error) {
+    console.error("Error fetching users by IDs:", error);
+    return [];
+  }
+}
+
+// Tambahkan fungsi ini di file db.ts
+
+// Fungsi untuk mendapatkan semua user (customers)
+export async function getAllUsers(offset = 0, limit = 10) {
+  try {
+    const usersList = await db.select()
+      .from(users)
+      .limit(limit)
+      .offset(offset);
+    
+    const totalUsers = await db.select({ count: count() })
+      .from(users);
+    
+    return {
+      users: usersList,
+      totalUsers: totalUsers[0].count
+    };
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    return { users: [], totalUsers: 0 };
+  }
+}
+
+// Fungsi untuk mendapatkan transaksi untuk user tertentu
+export async function getTransactionsByUser(userId: number) {
+  try {
+    const userTransactions = await db.select()
+      .from(transactions)
+      .where(eq(transactions.id_user, userId));
+    
+    return userTransactions;
+  } catch (error) {
+    console.error(`Error fetching transactions for user ${userId}:`, error);
+    return [];
+  }
+}
+
+// Tambahkan fungsi untuk mendapatkan user berdasarkan ID
+
+export async function getById(userId: number) {
+  try {
+    const result = await db.select()
+      .from(users)
+      .where(eq(users.idUser, userId))
+      .limit(1);
+    
+    return result.length > 0 ? result[0] : null;
+  } catch (error) {
+    console.error(`Error fetching user ${userId}:`, error);
+    return null;
   }
 }

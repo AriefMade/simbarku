@@ -1,4 +1,4 @@
-// File: C:\Users\Wiera\Documents\Codingan\PBW\NO REVISI AJG\simbarku\app\layout.tsx
+// File: D:\Aplikasi\simbarku\app\layout.tsx
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

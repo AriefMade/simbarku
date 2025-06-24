@@ -1,5 +1,8 @@
+"use client";
+
 import { Suspense } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   Home,
   ShoppingCart,
@@ -8,7 +11,6 @@ import {
   LineChart,
   MenuIcon,
   X,
-  PlusCircle
 } from 'lucide-react';
 import { User } from './user';
 import { SearchInput } from './search';
@@ -21,6 +23,7 @@ export default function AdminDashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
   return (
     <Providers>
       <div className="admin-layout min-h-screen flex flex-col">
@@ -55,10 +58,16 @@ export default function AdminDashboardLayout({
                   </p>
                   <div className="space-y-1">
                     <Link 
-                      href="/admin" 
-                      className="flex items-center px-3 py-2 text-sm rounded-md hover:bg-gray-100"
+                      href="/admin/analytics" 
+                      className={`flex items-center px-3 py-2 text-sm rounded-md ${
+                        pathname === '/admin/analytics' 
+                          ? 'bg-gray-100 text-gray-900 font-medium' 
+                          : 'hover:bg-gray-100'
+                      }`}
                     >
-                      <Home className="h-5 w-5 mr-3 text-gray-500" />
+                      <Home className={`h-5 w-5 mr-3 ${
+                        pathname === '/admin/analytics' ? 'text-gray-700' : 'text-gray-500'
+                      }`} />
                       Dashboard
                     </Link>
                   </div>
@@ -70,36 +79,41 @@ export default function AdminDashboardLayout({
                   </p>
                   <div className="space-y-1">
                     <Link 
-                      href="/admin" 
-                      className="flex items-center px-3 py-2 text-sm font-medium rounded-md bg-gray-100 text-gray-900"
-                    >
-                      <Package className="h-5 w-5 mr-3 text-gray-700" />
-                      All Products
-                    </Link>
-                    <Link 
-                      href="/admin/products/new" 
-                      className="flex items-center px-3 py-2 text-sm rounded-md hover:bg-gray-100"
-                    >
-                      <PlusCircle className="h-5 w-5 mr-3 text-gray-500" />
-                      Add Product
-                    </Link>
+                    href="/admin" 
+                    className={`flex items-center px-3 py-2 text-sm rounded-md ${
+                      pathname === '/admin' && !pathname.includes('/admin/orders') 
+                        ? 'bg-gray-100 text-gray-900 font-medium' 
+                        : 'hover:bg-gray-100'
+                    }`}
+                  >
+                    <Package className={`h-5 w-5 mr-3 ${
+                      pathname === '/admin' && !pathname.includes('/admin/orders') ? 'text-gray-700' : 'text-gray-500'
+                    }`} />
+                    All Products
+                  </Link>
                   </div>
                 </div>
                 
                 <div className="pb-4">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">
-                    Orders
-                  </p>
-                  <div className="space-y-1">
-                    <Link 
-                      href="/admin/orders" 
-                      className="flex items-center px-3 py-2 text-sm rounded-md hover:bg-gray-100"
-                    >
-                      <ShoppingCart className="h-5 w-5 mr-3 text-gray-500" />
-                      All Orders
-                    </Link>
-                  </div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">
+                  Orders
+                </p>
+                <div className="space-y-1">
+                  <Link 
+                    href="/admin/orders" 
+                    className={`flex items-center px-3 py-2 text-sm rounded-md ${
+                      pathname.includes('/admin/orders') 
+                        ? 'bg-gray-100 text-gray-900 font-medium' 
+                        : 'hover:bg-gray-100'
+                    }`}
+                  >
+                    <ShoppingCart className={`h-5 w-5 mr-3 ${
+                      pathname.includes('/admin/orders') ? 'text-gray-700' : 'text-gray-500'
+                    }`} />
+                    All Orders
+                  </Link>
                 </div>
+              </div>
                 
                 <div className="pb-4">
                   <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">
@@ -116,7 +130,7 @@ export default function AdminDashboardLayout({
                   </div>
                 </div>
                 
-                <div className="pb-4">
+                {/* <div className="pb-4">
                   <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">
                     Analytics
                   </p>
@@ -129,7 +143,7 @@ export default function AdminDashboardLayout({
                       Overview
                     </Link>
                   </div>
-                </div>
+                </div> */}
               </nav>
             </div>
           </aside>
@@ -150,7 +164,7 @@ export default function AdminDashboardLayout({
                     Dashboard
                   </p>
                   <Link 
-                    href="/admin" 
+                    href="/admin/analytics" 
                     className="flex items-center px-3 py-2 text-sm rounded-md hover:bg-gray-100"
                   >
                     <Home className="h-5 w-5 mr-3 text-gray-500" />
@@ -169,16 +183,52 @@ export default function AdminDashboardLayout({
                     <Package className="h-5 w-5 mr-3 text-gray-500" />
                     All Products
                   </Link>
+                </div>
+                
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">
+                    Orders
+                  </p>
                   <Link 
-                    href="/admin/products/new" 
-                    className="flex items-center px-3 py-2 text-sm rounded-md hover:bg-gray-100"
+                    href="/admin/orders" 
+                    className={`flex items-center px-3 py-2 text-sm rounded-md ${
+                      pathname.includes('/admin/orders') 
+                        ? 'bg-gray-100 text-gray-900 font-medium' 
+                        : 'hover:bg-gray-100'
+                    }`}
                   >
-                    <PlusCircle className="h-5 w-5 mr-3 text-gray-500" />
-                    Add Product
+                    <ShoppingCart className={`h-5 w-5 mr-3 ${
+                      pathname.includes('/admin/orders') ? 'text-gray-700' : 'text-gray-500'
+                    }`} />
+                    All Orders
                   </Link>
                 </div>
                 
-                {/* Other mobile menu items... */}
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">
+                    Customers
+                  </p>
+                  <Link 
+                    href="/admin/customers" 
+                    className="flex items-center px-3 py-2 text-sm rounded-md hover:bg-gray-100"
+                  >
+                    <Users2 className="h-5 w-5 mr-3 text-gray-500" />
+                    All Customers
+                  </Link>
+                </div>
+                
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">
+                    Analytics
+                  </p>
+                  <Link 
+                    href="/admin/analytics" 
+                    className="flex items-center px-3 py-2 text-sm rounded-md hover:bg-gray-100"
+                  >
+                    <LineChart className="h-5 w-5 mr-3 text-gray-500" />
+                    Overview
+                  </Link>
+                </div>
               </nav>
             </div>
           </aside>

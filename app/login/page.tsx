@@ -36,6 +36,7 @@ export default function Login(): JSX.Element {
       router.push(callbackUrl);
       router.refresh();
     } catch (error) {
+      console.error('Login error:', error);
       setError('Terjadi kesalahan saat login');
       setLoading(false);
     }
