@@ -5,6 +5,12 @@ import { useEffect, useState } from 'react';
 export default function CheckoutPage() {
   // Ambil cart dari localStorage
   const [items, setItems] = useState<{ name: string; price: number; qty: number; imgSrc?: string }[]>([]);
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({
+    name: '',
+    address: '',
+    phone: '',
+  });
 
   useEffect(() => {
     const storedCart = localStorage.getItem('cart');
@@ -38,6 +44,17 @@ export default function CheckoutPage() {
   };
 
   const total = items.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Lakukan submit ke backend di sini
+    alert('Order berhasil!\n' + JSON.stringify(form, null, 2));
+    setShowForm(false);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-300">
@@ -96,10 +113,64 @@ export default function CheckoutPage() {
         <button
           className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold py-3 rounded-xl mt-2"
           disabled={items.length === 0}
+          onClick={() => setShowForm(true)}
         >
           Checkout
         </button>
       </div>
+
+      {/* Modal Form */}
+      {showForm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <form
+            className="bg-white rounded-xl p-8 min-w-[350px] shadow-lg flex flex-col gap-4"
+            onSubmit={handleFormSubmit}
+          >
+            <h2 className="text-xl font-bold mb-2">Formulir Pemesanan</h2>
+            <input
+              type="text"
+              name="name"
+              placeholder="Nama Lengkap"
+              value={form.name}
+              onChange={handleFormChange}
+              className="border rounded px-3 py-2"
+              required
+            />
+            <textarea
+              name="address"
+              placeholder="Alamat Pengiriman"
+              value={form.address}
+              onChange={handleFormChange}
+              className="border rounded px-3 py-2"
+              required
+            />
+            <input
+              type="tel"
+              name="phone"
+              placeholder="Nomor Telepon"
+              value={form.phone}
+              onChange={handleFormChange}
+              className="border rounded px-3 py-2"
+              required
+            />
+            <div className="flex justify-end gap-2 mt-2">
+              <button
+                type="button"
+                className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
+                onClick={() => setShowForm(false)}
+              >
+                Batal
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+              >
+                Kirim Pesanan
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 }
