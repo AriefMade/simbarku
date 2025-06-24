@@ -1,1 +1,5 @@
-{"node":{"044e29522da8f20dac495db5ce52cdc1feb20cb4":{"workers":{"app/api/auth/login/page":"155"},"layer":{"app/api/auth/login/page":"rsc"}}},"edge":{},"encryptionKey":"cwQdBCmqvMVU6on5CgRoa7VdgQE0XhNh35Pzvy016MM="}
+{
+  "node": {},
+  "edge": {},
+  "encryptionKey": "6RmG1YlqHkWzxMclwMOBn6FlxXiCagf8yzNMr7vkPJE="
+}

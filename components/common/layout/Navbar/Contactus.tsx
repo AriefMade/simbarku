@@ -118,7 +118,7 @@ const Contactusform = () => {
                                             <button 
                                               type="button" 
                                               onClick={handleClick}
-                                              className="w-full py-3 px-5 text-sm font-medium text-center text-white rounded-lg bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none"
+                                              className="w-full py-3 px-5 text-sm font-medium text-center text-white rounded-lg bg-blue-600 hover:bg-[#007BFF] hover:text-white focus:ring-4 focus:outline-none transition-colors"
                                             >
                                               Submit
                                             </button>

@@ -1,26 +1,5 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/api/admin/update-password/route": "app/api/admin/update-password/route.js",
-  "/api/auth/verify/route": "app/api/auth/verify/route.js",
-  "/api/login/route": "app/api/login/route.js",
-  "/api/auth/login/page": "app/api/auth/login/page.js",
-  "/api/product/route": "app/api/product/route.js",
-  "/api/auth/session/route": "app/api/auth/session/route.js",
-  "/checkout/page": "app/checkout/page.js",
-  "/api/auth/verify-password/route": "app/api/auth/verify-password/route.js",
-  "/login/page": "app/login/page.js",
-  "/icon.ico/route": "app/icon.ico/route.js",
   "/page": "app/page.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
-  "/api/seed/route": "app/api/seed/route.js",
-  "/accesories/page": "app/accesories/page.js",
-  "/shop/page": "app/shop/page.js",
-  "/supplies/page": "app/supplies/page.js",
-  "/admin/settings/password/page": "app/admin/settings/password/page.js",
-  "/admin/(dashboard)/analytics/page": "app/admin/(dashboard)/analytics/page.js",
-  "/admin/(dashboard)/customers/[id]/page": "app/admin/(dashboard)/customers/[id]/page.js",
-  "/admin/(dashboard)/orders/page": "app/admin/(dashboard)/orders/page.js",
-  "/admin/(dashboard)/page": "app/admin/(dashboard)/page.js",
-  "/admin/(dashboard)/customers/page": "app/admin/(dashboard)/customers/page.js"
+  "/checkout/page": "app/checkout/page.js",
+  "/accesories/page": "app/accesories/page.js"
 }

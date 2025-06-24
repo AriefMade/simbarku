@@ -53,8 +53,8 @@ const Navbar = () => {
                                             key={item.name}
                                             href={item.href}
                                             className={classNames(
-                                                item.current ? 'bg-gray-900' : 'navlinks hover:text-white',
-                                                'px-3 py-4 rounded-md text-lg font-normal'
+                                                item.current ? 'bg-gray-900' : 'navlinks hover:text-[#007BFF]',
+                                                'px-3 py-4 rounded-md text-lg font-normal text-[#007BFF]'
                                             )}
                                             aria-current={item.href ? 'page' : undefined}
                                         >
@@ -67,7 +67,7 @@ const Navbar = () => {
                             {/* Contact Us Dropdown with Admin Access */}
                             <Menu as="div" className="relative inline-block text-left">
                                 <div>
-                                    <Menu.Button className="hidden lg:flex justify-end text-xl font-semibold bg-transparent py-4 px-6 lg:px-12 navbutton rounded-full hover:bg-white hover:text-black">
+                                    <Menu.Button className="hidden lg:flex justify-end text-xl font-semibold bg-transparent py-4 px-6 lg:px-12 navbutton rounded-full hover:bg-[#007BFF] hover:text-white">
                                         Contact Us
                                         <ChevronDownIcon
                                             className="ml-2 -mr-1 h-5 w-5"

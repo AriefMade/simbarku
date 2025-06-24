@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[518],{7518:function(t,n,e){e.r(n),e.d(n,{DoughnutChart:function(){return o}});var i=e(7437),s=e(4084),u=e(6705);function o(t){let{data:n}=t;return(0,i.jsx)(u.$I,{data:n,options:{responsive:!0,maintainAspectRatio:!1,plugins:{legend:{position:"bottom"}}}})}s.kL.register(s.qi,s.Dx,s.u,s.De)}}]);

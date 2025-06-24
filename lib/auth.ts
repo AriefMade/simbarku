@@ -2,7 +2,7 @@ import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
 // Use implementation without native modules for Edge runtime
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const { handlers, auth, signIn } = NextAuth({
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -52,8 +52,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   
   pages: {
     signIn: '/login',
-    signOut: '/',
-    error: '/login',
+    error: '/login'
   },
   
   session: {
@@ -76,3 +75,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }
   }
 });
+
+// lib/auth.ts
+export async function signOut({ redirectTo = '/' } = {}) {
+  try {
+    // Clear localStorage dan sessionStorage
+    localStorage.removeItem('authToken');
+    sessionStorage.clear();
+    
+    // Hapus cookies jika ada
+    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    
+    // Force redirect ke homepage
+    window.location.href = redirectTo;
+    
+    return true;
+  } catch (error) {
+    console.error('Logout error:', error);
+    throw error;
+  }
+}
