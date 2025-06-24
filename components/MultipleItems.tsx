@@ -68,11 +68,6 @@ const MultipleItems = ({ title, data, onBuy }: MultipleItemsProps) => {
                 >
                   Buy
                 </button>
-                <Link href="/" className="absolute bottom-4 right-4">
-                  <h3 className="bg-[#007BFF] text-white  hover:shadow-xl py-2 px-4 rounded-full text-sm">
-                    Buy
-                  </h3>
-                </Link>
                 <div className="pt-6 px-1 flex-1 flex flex-col justify-between">
                   <div>
                     <h4 className="text-2xl font-bold text-black">{item.heading}</h4>
