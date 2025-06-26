@@ -11,12 +11,11 @@ export default function CheckoutPage() {
     address: '',
     phone: '',
   });
+  const [showSuccess, setShowSuccess] = useState(false); // Tambahkan state untuk modul sukses
 
   useEffect(() => {
     const storedCart = localStorage.getItem('cart');
     if (storedCart) {
-      // Data cart dari ShopPage: { item: DataType, qty: number }[]
-      // Ubah ke bentuk yang dibutuhkan checkout
       const parsed = JSON.parse(storedCart).map((c: any) => ({
         name: c.item.heading,
         price: Number(c.item.price),
@@ -27,7 +26,6 @@ export default function CheckoutPage() {
     }
   }, []);
 
-  // Update quantity handler
   const handleQtyChange = (idx: number, delta: number) => {
     setItems(items =>
       items.map((item, i) =>
@@ -38,7 +36,6 @@ export default function CheckoutPage() {
     );
   };
 
-  // Remove item handler
   const handleRemove = (idx: number) => {
     setItems(items => items.filter((_, i) => i !== idx));
   };
@@ -52,8 +49,8 @@ export default function CheckoutPage() {
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Lakukan submit ke backend di sini
-    alert('Order berhasil!\n' + JSON.stringify(form, null, 2));
     setShowForm(false);
+    setShowSuccess(true); // Tampilkan modul sukses
   };
 
   return (
@@ -169,6 +166,25 @@ export default function CheckoutPage() {
               </button>
             </div>
           </form>
+        </div>
+      )}
+
+      {/* Modal Sukses */}
+      {showSuccess && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-xl p-8 min-w-[350px] shadow-lg flex flex-col items-center">
+            <svg className="w-16 h-16 text-green-500 mb-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <h2 className="text-2xl font-bold mb-2 text-center">Order berhasil!</h2>
+            <p className="text-gray-600 mb-4 text-center">Terima kasih, pesanan Anda telah diterima.</p>
+            <button
+              className="px-6 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+              onClick={() => setShowSuccess(false)}
+            >
+              Tutup
+            </button>
+          </div>
         </div>
       )}
     </div>
