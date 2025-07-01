@@ -28,14 +28,15 @@ const connection = mysql.createPool({
 export const db = drizzle(connection);
 
 // Definisi tabel products
-export const products = mysqlTable('products', {
-  id: int('id').primaryKey().autoincrement(),
-  imageUrl: text('image_url').notNull(),
-  name: text('name').notNull(),
-  status: mysqlEnum('status', ['active', 'inactive', 'archived']).notNull(),
-  price: decimal('price', { precision: 10, scale: 2 }).notNull(),
-  stock: int('stock').notNull(),
-  availableAt: timestamp('available_at').notNull()
+export const products = mysqlTable("products", {
+  id: int("id").primaryKey().autoincrement(),
+  name: text("name").notNull(),
+  imageUrl: text("image_url").notNull(), // Sesuaikan nama field
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  stock: int("stock").notNull(),
+  kategori: varchar("kategori", { length: 100 }).notNull(),
+  status: mysqlEnum("status", ["active", "inactive", "archived"]).default("active"),
+  availableAt: timestamp("available_at").notNull() // Sesuaikan nama field
 });
 
 // Definisi tabel admin
@@ -415,3 +416,12 @@ export async function getById(userId: number) {
     return null;
   }
 }
+
+
+export const detail_transaksi = mysqlTable('detail_transaksi', {
+  id_detail: int('id_detail').primaryKey().autoincrement(),
+  id_transaksi: int('id_transaksi').notNull().references(() => transactions.id_transaksi),
+  id_product: int('id_product').notNull().references(() => products.id),
+  qty: int('qty').notNull(),
+  harga_satuan: decimal('harga_satuan', { precision: 10, scale: 2 }).notNull()
+});

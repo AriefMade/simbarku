@@ -1,30 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import MultipleItems from '@/components/MultipleItems';
 import { DataType } from '@/components/MultipleItems';
 import { useRouter } from 'next/navigation';
-
-const shopData: DataType[] = [
-  {
-    time: 'Buy',
-    heading: 'Simbar Mini',
-    heading2: 'Dengan moss alami',
-    name: 'SimbarPlants',
-    date: 'June 2025',
-    imgSrc: '/images/product/item1.jpg',
-    price: '55000',
-  },
-  {
-    time: 'Buy',
-    heading: 'Simbar Premium',
-    heading2: 'Tanaman hias eksklusif',
-    name: 'SimbarPlants',
-    date: 'June 2025',
-    imgSrc: '/images/product/item2.jpg',
-    price: '85000',
-  },
-];
 
 export default function SuppliesPage() {
   const router = useRouter();
@@ -33,6 +12,92 @@ export default function SuppliesPage() {
   const [selectedProduct, setSelectedProduct] = useState<DataType | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [cart, setCart] = useState<{ item: DataType; qty: number }[]>([]);
+  const [products, setProducts] = useState<DataType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Load cart from localStorage
+  useEffect(() => {
+    const savedCart = localStorage.getItem('cart');
+    if (savedCart) {
+      try {
+        setCart(JSON.parse(savedCart));
+      } catch (e) {
+        console.error('Error loading cart:', e);
+      }
+    }
+  }, []);
+
+  // Fetch products from API
+  useEffect(() => {
+    async function fetchSupplies() {
+      try {
+        setLoading(true);
+        // Mengambil hanya produk dengan kategori 'mediaTanaman' untuk halaman supplies
+        const response = await fetch('/api/shop?kategori=mediaTanaman');
+        
+        if (!response.ok) {
+          throw new Error('Failed to load products');
+        }
+        
+        const data = await response.json();
+        
+        // Transform data untuk format DataType
+        const formattedData = data.map((item: any) => ({
+          id: item.id,
+          time: 'Buy',
+          heading: item.name,
+          heading2: `Kategori: ${item.kategori}`,
+          name: 'SimbarPlants',
+          date: new Date(item.availableAt).toLocaleDateString('id-ID', {month: 'long', year: 'numeric'}),
+          imgSrc: item.imageUrl || '/images/product/item1.jpg',
+          price: String(item.price),
+          stock: item.stock
+        }));
+        
+        setProducts(formattedData);
+        setError(null);
+      } catch (err: any) {
+        console.error('Error fetching products:', err);
+        setError(err.message);
+        
+        // Fallback ke data statis jika API gagal
+        setProducts([
+          {
+            id: 999,
+            time: 'Buy',
+            heading: 'Simbar Mini',
+            heading2: 'Dengan moss alami',
+            name: 'SimbarPlants',
+            date: 'June 2025',
+            imgSrc: '/images/product/item1.jpg',
+            price: '55000',
+            stock: 10
+          },
+          {
+            id: 998,
+            time: 'Buy',
+            heading: 'Simbar Premium',
+            heading2: 'Tanaman hias eksklusif',
+            name: 'SimbarPlants',
+            date: 'June 2025',
+            imgSrc: '/images/product/item2.jpg',
+            price: '85000',
+            stock: 8
+          },
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    fetchSupplies();
+  }, []);
+
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }, [cart]);
 
   const handleBuy = (item: DataType) => {
     setSelectedProduct(item);
@@ -43,7 +108,7 @@ export default function SuppliesPage() {
   const handleAddToCart = () => {
     if (selectedProduct) {
       setCart(prev => {
-        const idx = prev.findIndex(c => c.item.heading === selectedProduct.heading);
+        const idx = prev.findIndex(c => c.item.id === selectedProduct.id);
         if (idx > -1) {
           const updated = [...prev];
           updated[idx].qty += quantity;
@@ -51,15 +116,37 @@ export default function SuppliesPage() {
         }
         return [...prev, { item: selectedProduct, qty: quantity }];
       });
+      setShowPopup(false);
     }
-    setShowPopup(false);
-    
   };
 
   const handleClose = () => setShowPopup(false);
-
-  // Button Cart
+  
   const cartCount = cart.reduce((sum, c) => sum + c.qty, 0);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+          <p>Error loading products: {error}</p>
+          <button 
+            className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            onClick={() => window.location.reload()}
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -76,11 +163,13 @@ export default function SuppliesPage() {
 
       <MultipleItems
         title="Our Simbar Plants & Media Variants"
-        data={shopData}
-        onBuy={handleBuy}
+        data={products}
+        onBuyClick={handleBuy} // Pastikan nama prop sesuai dengan yang diharapkan komponen
+        showCart={() => setShowCart(true)}
+        cartItemCount={cartCount}
       />
 
-      {/* Cart Modal */}
+      {/* Cart Modal dan Popup dibiarkan sama seperti kode asli... */}
       {showCart && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-xl p-6 min-w-[400px] shadow-lg max-w-xl w-full">
@@ -115,7 +204,7 @@ export default function SuppliesPage() {
                 <button
                   className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-xl"
                   onClick={() => {
-                    localStorage.setItem('cart', JSON.stringify(cart)); // simpan cart ke localStorage
+                    localStorage.setItem('cart', JSON.stringify(cart));
                     setShowCart(false);
                     router.push('/checkout');
                   }}
@@ -151,9 +240,8 @@ export default function SuppliesPage() {
               <button
                 className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
                 onClick={() => {
-                  // Redirect langsung ke checkout dengan data produk & qty
                   router.push(
-                    `/checkout?product=${selectedProduct.heading}&qty=${quantity}&price=${selectedProduct.price}&imgSrc=${selectedProduct.imgSrc}`
+                    `/checkout?product=${selectedProduct.heading}&qty=${quantity}&price=${selectedProduct.price}&imgSrc=${selectedProduct.imgSrc}&id=${selectedProduct.id}`
                   );
                   setShowPopup(false);
                 }}
