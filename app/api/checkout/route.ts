@@ -95,11 +95,10 @@ export async function POST(request: Request) {
       );
     }
     
-    console.log("Using transaction ID:", transactionId); // Debug final ID
+    console.log("Using transaction ID:", transactionId);
     
-    // 4. Tambahkan detail transaksi dan update stok
+    
     for (const item of items) {
-      // Tambahkan detail transaksi dengan raw SQL
       await db.execute(
         sql`INSERT INTO detail_transaksi (id_transaksi, id_product, qty, harga_satuan) 
             VALUES (${transactionId}, ${item.id}, ${item.qty}, ${item.price})`

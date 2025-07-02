@@ -150,26 +150,15 @@ export default function SuppliesPage() {
 
   return (
     <div>
-      {/* Cart Button */}
-      <button
-        className="fixed top-6 right-6 z-50 flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg"
-        onClick={() => setShowCart(true)}
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.35 2.7A2 2 0 0 0 7.48 19h9.04a2 2 0 0 0 1.83-1.3L21 13M7 13V6a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v7" />
-        </svg>
-        Cart ({cartCount})
-      </button>
-
       <MultipleItems
         title="Our Simbar Plants & Media Variants"
         data={products}
-        onBuyClick={handleBuy} // Pastikan nama prop sesuai dengan yang diharapkan komponen
+        onBuyClick={handleBuy}
         showCart={() => setShowCart(true)}
         cartItemCount={cartCount}
       />
 
-      {/* Cart Modal dan Popup dibiarkan sama seperti kode asli... */}
+      {/* Cart Modal dan Popup */}
       {showCart && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-xl p-6 min-w-[400px] shadow-lg max-w-xl w-full">

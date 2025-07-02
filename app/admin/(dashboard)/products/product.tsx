@@ -12,8 +12,10 @@ import {
   DropdownMenuTrigger
 } from '@/components/common/ui/ui/dropdown-menu';
 import { MoreHorizontal } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export function Product({ product }: { product: SelectProduct }) {
+  const router = useRouter();
   const formattedPrice = formatPrice(Number(product.price));
   const formattedDate = typeof product.availableAt === 'string'
     ? new Date(product.availableAt).toLocaleDateString()
@@ -61,17 +63,35 @@ export function Product({ product }: { product: SelectProduct }) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem asChild>
-              <a href={`/admin/products/edit/${idString}`}>Edit</a>
+            <DropdownMenuItem>
+              <button 
+                className="w-full text-left"
+                onClick={() => router.push(`/admin/products/edit/${product.id}`)}
+              >
+                Edit
+              </button>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              {/* Untuk static export, gunakan client-side deletion */}
               <button
-                className="w-full text-left"
+                className="w-full text-left text-red-600"
                 onClick={() => {
                   if (confirm('Are you sure you want to delete this product?')) {
-                    console.log('Would delete product:', product.id);
-                    // Untuk implementasi nyata, bisa menggunakan fetch ke API
+                    // Call delete API
+                    fetch(`/api/admin/products/${product.id}`, {
+                      method: 'DELETE',
+                    })
+                    .then(response => {
+                      if (response.ok) {
+                        // Refresh page to show updated list
+                        router.refresh();
+                      } else {
+                        throw new Error('Failed to delete product');
+                      }
+                    })
+                    .catch(error => {
+                      console.error('Error deleting product:', error);
+                      alert('Failed to delete product');
+                    });
                   }
                 }}
               >
