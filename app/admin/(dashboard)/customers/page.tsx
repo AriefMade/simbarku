@@ -47,24 +47,19 @@ export default async function CustomersPage({
           
           <Tabs defaultValue="all">
             <div className="flex items-center">
-              <TabsList>
-                <TabsTrigger value="all">Semua Pelanggan</TabsTrigger>
-                <TabsTrigger value="active">Aktif</TabsTrigger>
-                <TabsTrigger value="inactive">Non-aktif</TabsTrigger>
-              </TabsList>
               <div className="ml-auto flex items-center gap-2">
-                <Button size="sm" variant="outline" className="h-8 gap-1">
-                  <FileText className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Ekspor
-                  </span>
-                </Button>
-                <Button size="sm" className="h-8 gap-1">
-                  <PlusCircle className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Pelanggan Baru
-                  </span>
-                </Button>
+                <div className="flex items-center rounded-md border px-3">
+                  <input
+                  type="search"
+                  placeholder="Cari pelanggan..."
+                  className="h-8 w-full bg-transparent py-2 text-sm outline-none placeholder:text-muted-foreground"
+                  />
+                  <button className="h-8 w-8 flex items-center justify-center"></button>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 opacity-50">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.3-4.3" />
+                  </svg>
+                </div>
               </div>
             </div>
             <TabsContent value="all" className="mt-4">
@@ -76,16 +71,16 @@ export default async function CustomersPage({
             </TabsContent>
             <TabsContent value="active" className="mt-4">
               <CustomersTable
-                customers={transformedCustomers.filter(user => /* kriteria aktif */true)}
+                customers={transformedCustomers.filter(user =>true)}
                 offset={0}
-                totalCustomers={transformedCustomers.filter(user => /* kriteria aktif */true).length}
+                totalCustomers={transformedCustomers.filter(user => true).length}
               />
             </TabsContent>
             <TabsContent value="inactive" className="mt-4">
               <CustomersTable
-                customers={transformedCustomers.filter(user => /* kriteria non-aktif */false)}
+                customers={transformedCustomers.filter(user => false)}
                 offset={0}
-                totalCustomers={transformedCustomers.filter(user => /* kriteria non-aktif */false).length}
+                totalCustomers={transformedCustomers.filter(user => false).length}
               />
             </TabsContent>
           </Tabs>

@@ -3,7 +3,7 @@ import { File, PlusCircle } from 'lucide-react';
 import { Button } from '@/components/common/ui/ui/button';
 import { ProductsTable } from './products/products-table';
 import { getProducts } from '@/lib/db';
-import router from 'next/router';
+import Link from 'next/link';
 
 export default async function ProductsPage(
   props: {
@@ -30,16 +30,17 @@ export default async function ProductsPage(
           </TabsTrigger>
         </TabsList>
         <div className="ml-auto flex items-center gap-2">
-          <Button 
-          size="sm" 
-          className="h-8 gap-1"
-          onClick={() => router.push('/admin/products/new')}
-          >
-            <PlusCircle className="h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Add Product
-            </span>
-          </Button>
+          <Link href="/admin/products/new">
+            <Button 
+              size="sm" 
+              className="h-8 gap-1"
+            >
+              <PlusCircle className="h-3.5 w-3.5" />
+              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                Add Product
+              </span>
+            </Button>
+          </Link>
         </div>
       </div>
       <TabsContent value="all">

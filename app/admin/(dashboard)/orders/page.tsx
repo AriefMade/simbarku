@@ -13,17 +13,14 @@ export default async function OrdersPage(
   const search = props.searchParams.q ?? '';
   const offset = props.searchParams.offset ? parseInt(props.searchParams.offset) : 0;
   const statusFilter = props.searchParams.status || 'all';
-  
-  // Ambil data transaksi dan user
+
   const { transactions, totalTransactions } = await getTransactionsWithUserData(offset);
   const { users } = await getUsers();
   
-  // Filter transaksi berdasarkan status jika diperlukan
   const filteredTransactions = statusFilter === 'all' 
     ? transactions 
     : transactions.filter(t => t.status === statusFilter);
   
-  // Pastikan mengembalikan elemen JSX
   return (
     <>
       <div className="flex items-center text-sm text-gray-500 mb-4">
@@ -32,10 +29,7 @@ export default async function OrdersPage(
         <span>Orders</span>
       </div>
       
-      <h1 className="text-2xl font-bold tracking-tight">Orders Management</h1>
-      <p className="text-muted-foreground mb-4">
-        Manage customer orders and transactions
-      </p>
+      <h1 className="text-2xl font-bold tracking-tight">Transaksi</h1>
       
       <div className="mt-6">
         <Tabs defaultValue="all">
@@ -124,6 +118,3 @@ export default async function OrdersPage(
     </>
   );
 }
-
-// Jika ingin menyimpan fungsi getTransactionsByStatus, pindahkan ke file terpisah
-// atau tambahkan setelah komponen utama
