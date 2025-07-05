@@ -79,7 +79,13 @@ export function ProductsTable({
           </TableHeader>
           <TableBody>
             {products.map((product) => (
-              <Product key={product.id} product={product} />
+              <Product 
+                key={product.id} 
+                product={{
+                  ...product,
+                  status: product.status || "active" // Convert null to a default status
+                }} 
+              />
             ))}
           </TableBody>
         </Table>

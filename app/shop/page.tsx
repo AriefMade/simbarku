@@ -19,11 +19,22 @@ export default function ShopPage() {
   const [activeCategory, setActiveCategory] = useState<string>('');
 
   // Fetch products from API
-  useEffect(() => {
-    async function fetchProducts() {
-      try {
-        setLoading(true);
-        const response = await fetch('/api/shop');
+ // Gantikan useEffect pertama yang ada di sekitar baris 23-84
+useEffect(() => {
+  async function fetchProducts() {
+    try {
+      setLoading(true);
+      
+      // Ambil kategori dari URL jika ada
+      const urlParams = new URLSearchParams(window.location.search);
+      const kategoriParam = urlParams.get('kategori');
+      
+      if (kategoriParam) {
+        // Set kategori aktif jika ada di URL
+        setActiveCategory(kategoriParam);
+        
+        // Fetch dengan filter kategori
+        const response = await fetch(`/api/shop?kategori=${encodeURIComponent(kategoriParam)}`);
         
         if (!response.ok) {
           throw new Error(`API error: ${response.status}`);
@@ -45,48 +56,51 @@ export default function ShopPage() {
         }));
         
         setProducts(formattedProducts);
-      } catch (err: any) {
-        setError(err.message);
-        console.error('Error fetching products:', err);
-        // Fallback ke data dummy jika gagal
-        setProducts([
-          {
-            time: 'Buy',
-            heading: 'Simbar Mini',
-            heading2: 'Dengan moss alami',
-            name: 'SimbarPlants',
-            date: 'June 2025',
-            imgSrc: '/images/product/item1.jpg',
-            price: '55000',
-          },
-          {
-            time: 'Buy',
-            heading: 'Simbar Premium',
-            heading2: 'Tanaman hias eksklusif',
-            name: 'SimbarPlants',
-            date: 'June 2025',
-            imgSrc: '/images/product/item2.jpg',
-            price: '85000',
-          },
-        ]);
-      } finally {
-        setLoading(false);
+      } else {
+        // Tanpa filter kategori jika tidak ada parameter
+        const response = await fetch('/api/shop');
+        
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        const formattedProducts: DataType[] = data.map((product: any) => ({
+          id: product.id,
+          time: 'Buy',
+          heading: product.name,
+          heading2: `Kategori: ${product.kategori}`,
+          name: 'SimbarPlants',
+          date: new Date(product.availableAt).toLocaleDateString('id-ID', {month: 'long', year: 'numeric'}),
+          imgSrc: product.imageUrl || '/images/product/item1.jpg',
+          price: String(product.price),
+          stock: product.stock
+        }));
+        
+        setProducts(formattedProducts);
       }
+    } catch (err: any) {
+      setError(err.message);
+      console.error('Error fetching products:', err);
+    } finally {
+      setLoading(false);
     }
+  }
 
-    // Get cart from localStorage
-    const storedCart = localStorage.getItem('cart');
-    if (storedCart) {
-      try {
-        const parsedCart = JSON.parse(storedCart);
-        setCart(parsedCart);
-      } catch (e) {
-        console.error('Error parsing stored cart:', e);
-      }
+  // Get cart from localStorage
+  const storedCart = localStorage.getItem('cart');
+  if (storedCart) {
+    try {
+      const parsedCart = JSON.parse(storedCart);
+      setCart(parsedCart);
+    } catch (e) {
+      console.error('Error parsing stored cart:', e);
     }
-    
-    fetchProducts();
-  }, []);
+  }
+  
+  fetchProducts();
+}, []);
 
   // Fetch categories in useEffect
   useEffect(() => {
@@ -189,7 +203,7 @@ export default function ShopPage() {
   return (
     <div className="relative">
       {/* Filter by Category */}
-      <div className="mb-6">
+      {/* <div className="mb-6">
         <h3 className="text-lg font-semibold mb-2">Filter by Category</h3>
         <div className="flex flex-wrap gap-2">
           <button 
@@ -208,7 +222,7 @@ export default function ShopPage() {
             </button>
           ))}
         </div>
-      </div>
+      </div> */}
 
       <MultipleItems 
         data={products} 

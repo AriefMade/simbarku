@@ -2,6 +2,38 @@ import { NextResponse } from 'next/server';
 import { db, products } from '@/lib/db';
 import { desc, sql } from 'drizzle-orm';
 import { auth } from '@/lib/auth';
+import { writeFile, mkdir } from 'fs/promises';
+import { join } from 'path';
+import { existsSync } from 'fs';
+
+// Helper function untuk menyimpan gambar
+async function saveImage(file: File): Promise<string> {
+  // Buat direktori jika belum ada
+  const uploadDir = join(process.cwd(), 'public/images/product');
+  
+  if (!existsSync(uploadDir)) {
+    await mkdir(uploadDir, { recursive: true });
+  }
+  
+  // Generate nama file unik: timestamp + nama produk tanpa spasi + ekstensi asli
+  const timestamp = Date.now();
+  const originalName = file.name.replace(/\s+/g, '-').toLowerCase();
+  const fileExtension = originalName.split('.').pop();
+  const fileName = `${timestamp}-${originalName}`;
+  
+  // Path lengkap dimana file akan disimpan
+  const filePath = join(uploadDir, fileName);
+  
+  // Convert File to Buffer
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+  
+  // Simpan file ke disk
+  await writeFile(filePath, buffer);
+  
+  // Return path relatif untuk disimpan di database
+  return `/images/product/${fileName}`;
+}
 
 // GET all products
 export async function GET(request: Request) {
@@ -55,25 +87,36 @@ export async function POST(request: Request) {
       );
     }
     
-    const body = await request.json();
+    // Parse formData dari request
+    const formData = await request.formData();
     
-    // Validate required fields
-    const { name, imageUrl, price, stock, kategori, status } = body;
-    if (!name || !imageUrl || price === undefined || stock === undefined) {
+    const name = formData.get('name') as string;
+    const price = Number(formData.get('price'));
+    const stock = Number(formData.get('stock'));
+    const kategori = formData.get('kategori') as string;
+    
+    // Dapatkan file gambar jika ada
+    const productImage = formData.get('productImage') as File | null;
+    let imageUrl = '';
+    
+    // Simpan gambar jika diunggah
+    if (productImage) {
+      imageUrl = await saveImage(productImage);
+    } else {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Product image is required' },
         { status: 400 }
       );
     }
     
-    // Insert new product
+    // Sisipkan produk ke database dengan tipe data yang benar
     const result = await db.insert(products).values({
-      name,
-      imageUrl,
-      price,
-      stock,
+      name: name,
+      imageUrl: imageUrl,
+      price: String(price), // Konversi ke string karena skema mengharapkan string
+      stock: stock,
       kategori: kategori || '',
-      status: status || 'active',
+      status: 'active' as const, // Gunakan 'as const' untuk memastikan tipe literal
       availableAt: new Date()
     });
     

@@ -12,7 +12,7 @@ import {
   binary,
   date
 } from 'drizzle-orm/mysql-core';
-import { count, eq, like, desc, sql, inArray } from 'drizzle-orm';
+import { count, eq, like, desc, sql, inArray, and, or } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 
 
@@ -80,12 +80,34 @@ export const users = mysqlTable('user', {
   email: text('email').notNull()
 });
 
+// Definisi tabel untuk forum threads
+export const forumThreads = mysqlTable('forum_thread', {
+  idThread: int('id_thread').primaryKey().autoincrement(),
+  title: varchar('title', { length: 255 }).notNull(),
+  idUser: int('id_user').references(() => users.idUser),
+  content: text('content').notNull(),
+  category: varchar('category', { length: 255 }).notNull(),
+  tags: varchar('tags', { length: 255 }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+// Definisi tabel untuk forum replies
+export const forumReplies = mysqlTable('forum_reply', {
+  idReply: int('id_reply').primaryKey().autoincrement(),
+  idThread: int('id_thread').notNull().references(() => forumThreads.idThread, { onDelete: 'cascade' }),
+  idUser: int('id_user').references(() => users.idUser),
+  content: text('content').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
 export type SelectProduct = typeof products.$inferSelect;
 export type SelectAdmin = typeof admins.$inferSelect;
 export type SelectUser = typeof users.$inferSelect;
 export type SelectForum = typeof forums.$inferSelect;
 export type SelectTestimoni = typeof testimonials.$inferSelect;
 export type SelectTransaksi = typeof transactions.$inferSelect;
+export type SelectForumThread = typeof forumThreads.$inferSelect;
+export type SelectForumReply = typeof forumReplies.$inferSelect;
 
 export const insertProductSchema = createInsertSchema(products);
 
@@ -417,7 +439,6 @@ export async function getById(userId: number) {
   }
 }
 
-
 export const detail_transaksi = mysqlTable('detail_transaksi', {
   id_detail: int('id_detail').primaryKey().autoincrement(),
   id_transaksi: int('id_transaksi').notNull().references(() => transactions.id_transaksi),
@@ -425,3 +446,139 @@ export const detail_transaksi = mysqlTable('detail_transaksi', {
   qty: int('qty').notNull(),
   harga_satuan: decimal('harga_satuan', { precision: 10, scale: 2 }).notNull()
 });
+
+// Tambahkan fungsi untuk operasi forum
+export async function getForumThreads(tag?: string) {
+  try {
+    // Gunakan pendekatan yang berbeda untuk filtering
+    if (tag) {
+      // Jika ada tag, gunakan satu query dengan kondisi tag
+      const threads = await db.select({
+        idThread: forumThreads.idThread,
+        title: forumThreads.title,
+        content: forumThreads.content,
+        category: forumThreads.category,
+        tags: forumThreads.tags,
+        createdAt: forumThreads.createdAt,
+        userName: users.nama,
+      })
+      .from(forumThreads)
+      .leftJoin(users, eq(forumThreads.idUser, users.idUser))
+      .where(like(forumThreads.tags, `%${tag}%`))
+      .orderBy(desc(forumThreads.createdAt));
+      
+      return threads;
+    } else {
+      // Jika tidak ada tag, gunakan query tanpa filter
+      const threads = await db.select({
+        idThread: forumThreads.idThread,
+        title: forumThreads.title,
+        content: forumThreads.content,
+        category: forumThreads.category,
+        tags: forumThreads.tags,
+        createdAt: forumThreads.createdAt,
+        userName: users.nama,
+      })
+      .from(forumThreads)
+      .leftJoin(users, eq(forumThreads.idUser, users.idUser))
+      .orderBy(desc(forumThreads.createdAt));
+      
+      return threads;
+    }
+  } catch (error) {
+    console.error("Error fetching forum threads:", error);
+    return [];
+  }
+}
+
+export async function getThreadReplies(threadId: number) {
+  try {
+    const replies = await db.select({
+      idReply: forumReplies.idReply,
+      content: forumReplies.content,
+      createdAt: forumReplies.createdAt,
+      userName: users.nama,
+    })
+    .from(forumReplies)
+    .leftJoin(users, eq(forumReplies.idUser, users.idUser))
+    .where(eq(forumReplies.idThread, threadId))
+    .orderBy(forumReplies.createdAt);
+    
+    return replies;
+  } catch (error) {
+    console.error("Error fetching thread replies:", error);
+    return [];
+  }
+}
+
+export async function createForumThread(threadData: {
+  title: string;
+  content: string;
+  category: string;
+  tags?: string;
+  idUser?: number;
+}) {
+  try {
+    const result = await db.insert(forumThreads).values({
+      title: threadData.title,
+      content: threadData.content,
+      category: threadData.category,
+      tags: threadData.tags,
+      idUser: threadData.idUser || null,
+    });
+    
+    // Perbaikan: Ambil ID yang baru dibuat dengan cara yang benar
+    return { success: true, idThread: Number(result[0].insertId) };
+  } catch (error) {
+    console.error("Error creating forum thread:", error);
+    return { success: false, error };
+  }
+}
+
+export async function createThreadReply(replyData: {
+  idThread: number;
+  content: string;
+  idUser?: number;
+}) {
+  try {
+    const result = await db.insert(forumReplies).values({
+      idThread: replyData.idThread,
+      content: replyData.content,
+      idUser: replyData.idUser || null,
+    });
+    
+    // Perbaikan: Akses insertId dengan benar
+    return { success: true, idReply: Number(result[0].insertId) };
+  } catch (error) {
+    console.error("Error creating thread reply:", error);
+    return { success: false, error };
+  }
+}
+
+export async function getForumTags() {
+  try {
+    // Ambil semua tag yang ada (dengan string tags)
+    const threads = await db.select({
+      tags: forumThreads.tags
+    })
+    .from(forumThreads)
+    .where(sql`${forumThreads.tags} IS NOT NULL AND ${forumThreads.tags} <> ''`);
+    
+    // Proses tag secara manual di JavaScript
+    const uniqueTags = new Set<string>();
+    threads.forEach(thread => {
+      if (thread.tags) {
+        const tagsArray = thread.tags.split(',').map(tag => tag.trim());
+        tagsArray.forEach(tag => {
+          if (tag) uniqueTags.add(tag);
+        });
+      }
+    });
+    
+    return Array.from(uniqueTags);
+  } catch (error) {
+    console.error("Error fetching forum tags:", error);
+    return [];
+  }
+}
+

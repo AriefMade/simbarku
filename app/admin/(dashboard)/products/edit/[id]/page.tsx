@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/common/ui/ui/card';
 import { Button } from '@/components/common/ui/ui/button';
 import { Input } from '@/components/common/ui/ui/input';
 import { Textarea } from '@/components/common/ui/textarea';
 import Link from 'next/link';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Upload } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/common/ui/ui/select';
 
 type ProductData = {
@@ -24,9 +24,12 @@ type ProductData = {
 export default function EditProductPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const productId = params.id;
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [formData, setFormData] = useState<ProductData>({
     id: 0,
     name: '',
@@ -58,6 +61,11 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
           status: product.status || 'active',
           description: product.description || ''
         });
+        
+        // If product has an image, set the preview
+        if (product.imageUrl) {
+          setImagePreview(product.imageUrl.startsWith('/') ? product.imageUrl : `/${product.imageUrl}`);
+        }
       } catch (error) {
         console.error('Error fetching product:', error);
         alert('Failed to load product data');
@@ -74,6 +82,20 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  // Handle image selection
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedImage(file);
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   // Fix: Add explicit type annotations
   const handleSelectChange = (name: string, value: string): void => {
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -84,19 +106,29 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
     setIsSubmitting(true);
 
     try {
-      // Convert price and stock to numbers if they're string inputs
-      const productData = {
-        ...formData,
-        price: typeof formData.price === 'string' ? parseFloat(formData.price) : formData.price,
-        stock: typeof formData.stock === 'string' ? parseInt(formData.stock as string, 10) : formData.stock
-      };
+      // Prepare form data for submission including the image if changed
+      const submitData = new FormData();
+      
+      // Add all form fields
+      submitData.append('id', formData.id.toString());
+      submitData.append('name', formData.name);
+      submitData.append('price', formData.price.toString());
+      submitData.append('stock', formData.stock.toString());
+      submitData.append('kategori', formData.kategori);
+      submitData.append('status', formData.status);
+      submitData.append('description', formData.description || '');
+      
+      // Only add the image file if a new one was selected
+      if (selectedImage) {
+        submitData.append('productImage', selectedImage);
+      } else if (formData.imageUrl) {
+        // Keep the existing image path
+        submitData.append('imageUrl', formData.imageUrl);
+      }
       
       const response = await fetch(`/api/admin/products/${productId}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(productData),
+        body: submitData, // FormData automatically sets the correct content-type
       });
       
       const data = await response.json();
@@ -157,27 +189,55 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
             </div>
             
             <div className="space-y-2">
-              <label htmlFor="imageUrl" className="text-sm font-medium">
-                Image URL
+              <label htmlFor="productImage" className="text-sm font-medium">
+                Product Image
               </label>
-              <Input
-                id="imageUrl"
-                name="imageUrl"
-                value={formData.imageUrl}
-                onChange={handleChange}
-                placeholder="https://example.com/image.jpg"
-                required
-              />
-              {formData.imageUrl && (
-                <div className="mt-2">
-                  <p className="text-sm text-gray-500 mb-1">Preview:</p>
-                  <img 
-                    src={formData.imageUrl} 
-                    alt="Product preview" 
-                    className="h-20 w-20 object-cover rounded-md" 
+              <div className="flex flex-col gap-4">
+                <div 
+                  className="border-2 border-dashed rounded-md p-6 flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 transition-colors"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <Upload className="h-8 w-8 text-gray-400 mb-2" />
+                  <p className="text-sm text-gray-500">Click to upload a new image or drag and drop</p>
+                  <p className="text-xs text-gray-400">PNG, JPG or WEBP (max. 2MB)</p>
+                  <input 
+                    ref={fileInputRef}
+                    type="file" 
+                    id="productImage" 
+                    name="productImage"
+                    accept="image/png, image/jpeg, image/webp"
+                    onChange={handleImageChange}
+                    className="hidden" 
                   />
                 </div>
-              )}
+                
+                {imagePreview && (
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-500 mb-1">Current image:</p>
+                    <div className="relative h-40 w-40">
+                      <img 
+                        src={imagePreview} 
+                        alt="Product preview" 
+                        className="h-full w-full object-cover rounded-md" 
+                      />
+                      <button
+                        type="button"
+                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 transform translate-x-1/3 -translate-y-1/3"
+                        onClick={() => {
+                          setSelectedImage(null);
+                          setImagePreview(null);
+                          setFormData(prev => ({ ...prev, imageUrl: '' }));
+                          if (fileInputRef.current) fileInputRef.current.value = '';
+                        }}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -218,13 +278,19 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
                 <label htmlFor="kategori" className="text-sm font-medium">
                   Category
                 </label>
-                <Input
-                  id="kategori"
-                  name="kategori"
-                  value={formData.kategori}
-                  onChange={handleChange}
-                  required
-                />
+                <Select 
+                  value={formData.kategori} 
+                  onValueChange={(value: string) => handleSelectChange('kategori', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="mediaTanaman">Media Tanaman</SelectItem>
+                    <SelectItem value="obatPupuk">Obat & Pupuk</SelectItem>
+                    <SelectItem value="aksesorisDisplay">Aksesoris & Display</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               
               <div className="space-y-2">

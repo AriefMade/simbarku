@@ -7,6 +7,7 @@ interface datatype {
     imgSrc: string;
     paragraph: string;
     link: string;
+    kategori: string;
 }
 
 const Aboutdata: datatype[] = [
@@ -14,19 +15,22 @@ const Aboutdata: datatype[] = [
         heading: "Simbar Plants & Media",
         imgSrc: "/images/aboutus/imgOne.svg",
         paragraph: 'Kami menawarkan tanaman simbar pilihan dengan kualitas terbaik, dilengkapi moss dan media tanam alami yang mendukung pertumbuhan sehat dan tampilan alami yang menawan.',
-        link: '/shop'
+        link: '/shop?kategori=mediaTanaman',
+        kategori : 'mediaTanam'
     },
     {
         heading: "Simbar Care Supplies",
         imgSrc: "/images/aboutus/imgTwo.svg",
         paragraph: 'Produk ini meliputi benang simbar, kawat bonsai, kawat besi, vitamin, dan pupuk yang diformulasikan khusus untuk memudahkan perawatan tanaman agar selalu sehat dan optimal.',
-        link: '/supplies'
+        link: '/shop?kategori=obatPupuk',
+        kategori : 'obatPupuk'
     },
     {
         heading: "Accessories & Displays",
         imgSrc: "/images/aboutus/imgThree.svg",
         paragraph: 'Kami menyediakan lampu khusus tanaman dan frame dekoratif yang berfungsi mempercantik tampilan simbar di berbagai ruang, menambah nilai estetika dan keindahan tanaman Anda.',
-        link: '/accesories'
+        link: '/shop?kategori=aksesorisDisplay',
+        kategori : 'aksesorisDisplay'
     },
 ]
 
@@ -48,11 +52,6 @@ const Product = () => {
                                 Shop Now
                                 <ChevronRightIcon width={20} height={20} />
                             </Link>
-
-                            {/* <Link href="#supplies-section" className='text-lg font-semibold group-hover:text-white text-black hover-underline'>
-                                Shop Now
-                                <ChevronRightIcon width={20} height={20} />
-                            </Link> */}
                         </div>
                     ))}
                 </div>
