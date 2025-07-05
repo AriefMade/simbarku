@@ -49,11 +49,11 @@ export default function AdminDashboardLayout({
         {/* Main content area with sidebar */}
         <div className="flex flex-1">
           {/* Desktop Sidebar - Visible on md screens and up */}
-          <aside className="hidden md:block w-64 bg-white border-r shadow-sm">
+          <aside className="hidden md:block w-64 bg-[#7294C6] border-r shadow-sm">
             <div className="fixed h-[calc(100vh-4rem)] w-64 pt-6 px-4 overflow-y-auto">
               <nav className="space-y-2">
                 <div className="pb-4">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-white mb-2">
                     Dashboard
                   </p>
                   <div className="space-y-1">
@@ -74,7 +74,7 @@ export default function AdminDashboardLayout({
                 </div>
                 
                 <div className="pb-4">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-white mb-2">
                     Products
                   </p>
                   <div className="space-y-1">
@@ -95,7 +95,7 @@ export default function AdminDashboardLayout({
                 </div>
                 
                 <div className="pb-4">
-                <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">
+                <p className="text-xs font-semibold uppercase tracking-wider text-white mb-2">
                   Orders
                 </p>
                 <div className="space-y-1">
@@ -116,7 +116,7 @@ export default function AdminDashboardLayout({
               </div>
                 
                 <div className="pb-4">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-white mb-2">
                     Customers
                   </p>
                   <div className="space-y-1">
@@ -129,21 +129,6 @@ export default function AdminDashboardLayout({
                     </Link>
                   </div>
                 </div>
-                
-                {/* <div className="pb-4">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">
-                    Analytics
-                  </p>
-                  <div className="space-y-1">
-                    <Link 
-                      href="/admin/analytics" 
-                      className="flex items-center px-3 py-2 text-sm rounded-md hover:bg-gray-100"
-                    >
-                      <LineChart className="h-5 w-5 mr-3 text-gray-500" />
-                      Overview
-                    </Link>
-                  </div>
-                </div> */}
               </nav>
             </div>
           </aside>

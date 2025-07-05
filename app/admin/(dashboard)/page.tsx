@@ -33,7 +33,8 @@ export default async function ProductsPage(
           <Link href="/admin/products/new">
             <Button 
               size="sm" 
-              className="h-8 gap-1"
+              className="h-8 gap-1 hover:bg-[#7294C6] hover:text-white"
+              variant="outline"
             >
               <PlusCircle className="h-3.5 w-3.5" />
               <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -41,7 +42,7 @@ export default async function ProductsPage(
               </span>
             </Button>
           </Link>
-        </div>
+        </div>
       </div>
       <TabsContent value="all">
         <ProductsTable

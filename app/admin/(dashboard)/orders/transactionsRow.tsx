@@ -97,9 +97,6 @@ export function TransactionRow({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem asChild>
-              <a href={`/admin/orders/${transaction.id_transaksi}`}>Detail Transaksi</a>
-            </DropdownMenuItem>
             
             {transaction.status !== 'completed' && (
               <DropdownMenuItem disabled={isLoading === 'completed'}>
