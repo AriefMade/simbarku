@@ -16,12 +16,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
-        {/* <Navbar /> */}
+      <body className="flex min-h-screen w-full flex-col">
         <Suspense fallback={null}>
           {children}
         </Suspense>
-        {/* <Footer /> */}
       </body>
     </html>
   );

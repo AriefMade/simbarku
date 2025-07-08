@@ -60,32 +60,6 @@ export default function SuppliesPage() {
       } catch (err: any) {
         console.error('Error fetching products:', err);
         setError(err.message);
-        
-        // Fallback ke data statis jika API gagal
-        setProducts([
-          {
-            id: 999,
-            time: 'Buy',
-            heading: 'Simbar Mini',
-            heading2: 'Dengan moss alami',
-            name: 'SimbarPlants',
-            date: 'June 2025',
-            imgSrc: '/images/product/item1.jpg',
-            price: '55000',
-            stock: 10
-          },
-          {
-            id: 998,
-            time: 'Buy',
-            heading: 'Simbar Premium',
-            heading2: 'Tanaman hias eksklusif',
-            name: 'SimbarPlants',
-            date: 'June 2025',
-            imgSrc: '/images/product/item2.jpg',
-            price: '85000',
-            stock: 8
-          },
-        ]);
       } finally {
         setLoading(false);
       }

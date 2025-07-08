@@ -11,7 +11,7 @@ const FAQ = () => {
                 <div className="mx-auto w-full max-w-5xl rounded-2xl bg-[#007BFF] py-8 px-6 mb-5">
                     <Disclosure>
                         {({ open }) => (
-                            <>
+                            <div>
                                 <Disclosure.Button className="flex w-full justify-between rounded-lg px-4 py-2 text-left text-2xl font-medium text-white">
                                     <span>Do you ship nationwide?</span>
                                     <ChevronUpIcon
@@ -22,7 +22,7 @@ const FAQ = () => {
                                 <Disclosure.Panel className="px-4 pt-4 pb-2 text-base text-white font-normal opacity-80">
                                     Yes, we ship to all regions across Indonesia. We ensure your staghorn fern and accessories are carefully packed and delivered in fresh, healthy condition through trusted delivery partners. Wherever you are, we’ll bring a touch of green to your space.
                                 </Disclosure.Panel>
-                            </>
+                            </div>
                         )}
                     </Disclosure>
                 </div>

@@ -8,19 +8,17 @@ export const metadata = {
     'Admin dashboard for managing Simbarku application, including orders, products, and user management.'
 };
 
-export const dynamic = 'force-dynamic'; // Enable dynamic rendering for database operations
+export const dynamic = 'force-dynamic';
 
 export default async function AdminLayout({
   children
 }: {
   children: React.ReactNode;
 }) {
-  // Initialize database connection
   try {
     await initDatabase();
   } catch (error) {
     console.error("Failed to initialize database connection:", error);
-    // Error will be handled by error.tsx
   }
 
   return (
