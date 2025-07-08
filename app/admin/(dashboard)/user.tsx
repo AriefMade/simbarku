@@ -11,7 +11,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/common/ui/ui/dropdown-menu';
-import Link from 'next/link';
 import { SignOutButton } from './sign-out-button';
 
 interface UserData {
@@ -73,14 +72,7 @@ export function User() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>{user?.name || 'My Account'}</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <Link href="/admin/settings" className="w-full">Settings</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Link href="/admin/profile" className="w-full">Profile</Link>
-        </DropdownMenuItem>
+        <DropdownMenuLabel>{user?.name || 'Admin'}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {user ? (
           <DropdownMenuItem>
@@ -88,7 +80,7 @@ export function User() {
           </DropdownMenuItem>
         ) : (
           <DropdownMenuItem>
-            <Link href="/login" className="w-full">Sign In</Link>
+            <a href="/login" className="w-full">Sign In</a>
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>

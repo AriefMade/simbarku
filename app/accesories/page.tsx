@@ -77,7 +77,7 @@ export default function AccesoriesPage() {
       <MultipleItems
         title="Our Simbar Plants & Media Variants"
         data={shopData}
-        onBuy={handleBuy}
+        onBuyClick={handleBuy}
       />
 
       {/* Cart Modal */}

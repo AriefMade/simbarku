@@ -87,9 +87,10 @@ export default function MultipleItems({
                   alt={item.heading}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute top-2 right-2 bg-blue-600 text-white px-2 py-1 rounded-md text-xs">
+                {/*kalo mau isi diskon bisa disiapin disini nanti*/}
+                {/* <div className="absolute top-2 right-2 bg-blue-600 text-white px-2 py-1 rounded-md text-xs">
                   {item.time}
-                </div>
+                </div> */}
               </div>
               <div className="p-4 flex-1 flex flex-col">
                 <h3 className="font-bold text-lg mb-1">{item.heading}</h3>
