@@ -6,8 +6,9 @@ export async function GET(request: Request) {
     const url = new URL(request.url);
     const search = url.searchParams.get('search') || '';
     const offset = parseInt(url.searchParams.get('offset') || '0');
+    const status = url.searchParams.get('status') || 'all';
 
-    const { products, newOffset, totalProducts } = await getProducts(search, offset);
+    const { products, newOffset, totalProducts } = await getProducts(search, offset, status);
 
     return NextResponse.json({
       products,

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/common/ui/ui/card';
 import { Button } from '@/components/common/ui/ui/button';
 import { Input } from '@/components/common/ui/ui/input';
@@ -21,9 +21,10 @@ type ProductData = {
   description?: string;
 };
 
-export default function EditProductPage({ params }: { params: { id: string } }) {
+export default function EditProductPage() {
   const router = useRouter();
-  const productId = params.id;
+  const { id } = useParams();
+  const productId = id;
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [isLoading, setIsLoading] = useState(true);

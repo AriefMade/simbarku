@@ -11,10 +11,11 @@ export async function GET(request: NextRequest) {
     
     const replies = await getThreadReplies(parseInt(threadId));
     
-    // Format output untuk klien
+    // Format output untuk klien, tambahkan imageUrl
     const formattedReplies = replies.map(reply => ({
       id: reply.idReply,
       content: reply.content,
+      imageUrl: reply.imageUrl, // Tambahkan imageUrl ke response
       createdAt: reply.createdAt,
       userName: reply.userName || 'Anonymous'
     }));
@@ -30,20 +31,22 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { threadId, content } = body;
+    const { threadId, content, imageUrl, userId } = body;
     
     // Validasi
-    if (!threadId || !content) {
+    if (!threadId || (!content && !imageUrl)) {
       return NextResponse.json(
-        { error: 'Thread ID and content are required' },
+        { error: 'Thread ID dan minimal salah satu dari content atau image diperlukan' },
         { status: 400 }
       );
     }
     
-    // Simpan reply baru
+    // Simpan reply baru dengan gambar dan userId jika ada
     const result = await createThreadReply({
       idThread: parseInt(threadId),
-      content
+      content: content || '',
+      imageUrl: imageUrl || null,
+      idUser: userId || null // Tambahkan userId jika ada
     });
     
     if (result.success) {

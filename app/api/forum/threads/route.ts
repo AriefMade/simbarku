@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     const tag = request.nextUrl.searchParams.get('tag') || undefined;
     const threads = await getForumThreads(tag);
     
-    // Format output untuk klien
+    // Format output untuk klien, tambahkan imageUrl
     const formattedThreads = threads.map(thread => {
       // Parse tags dari string menjadi array
       const tags = thread.tags?.split(',').filter(Boolean) || [];
@@ -17,6 +17,7 @@ export async function GET(request: NextRequest) {
         content: thread.content,
         category: thread.category,
         tags,
+        imageUrl: thread.imageUrl, // Tambahkan imageUrl ke response
         createdAt: thread.createdAt,
         userName: thread.userName || 'Anonymous'
       };
@@ -33,7 +34,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { title, content, category, tags } = body;
+    const { title, content, category, tags, imageUrl, userId } = body;
     
     // Validasi
     if (!title || !content || !category) {
@@ -46,16 +47,21 @@ export async function POST(request: NextRequest) {
     // Format tags jika perlu
     const formattedTags = Array.isArray(tags) ? tags.join(',') : tags;
     
-    // Simpan thread baru
+    // Simpan thread baru dengan userId jika ada
     const result = await createForumThread({
-      title,
-      content,
-      category,
-      tags: formattedTags
+      title, 
+      content, 
+      category, 
+      tags: formattedTags,
+      imageUrl: imageUrl || null,
+      idUser: userId || null
     });
     
     if (result.success) {
-      return NextResponse.json({ success: true, idThread: result.idThread });
+      return NextResponse.json({ 
+        success: true, 
+        threadId: result.idThread 
+      });
     } else {
       throw new Error('Failed to create thread');
     }

@@ -54,9 +54,9 @@ export const forums = mysqlTable('forum', {
   kategori: varchar('kategori', { length: 255 }).notNull()
 });
 
-// Definisi tabel testimoni
+// Modifikasi definisi tabel testimonial
 export const testimonials = mysqlTable('testimoni', {
-  idTestimoni: int('id_testimoni').primaryKey().autoincrement(),
+  id_testimoni: int('id_testimoni').primaryKey().autoincrement(), // Gunakan id_testimoni sesuai database
   nama: text('nama').notNull(),
   deskripsi: text('deskripsi').notNull(),
   rating: int('rating').notNull()
@@ -88,15 +88,17 @@ export const forumThreads = mysqlTable('forum_thread', {
   content: text('content').notNull(),
   category: varchar('category', { length: 255 }).notNull(),
   tags: varchar('tags', { length: 255 }),
+  imageUrl: text('imageUrl'), // Tambahkan kolom imageUrl
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 // Definisi tabel untuk forum replies
 export const forumReplies = mysqlTable('forum_reply', {
   idReply: int('id_reply').primaryKey().autoincrement(),
-  idThread: int('id_thread').notNull().references(() => forumThreads.idThread, { onDelete: 'cascade' }),
+  idThread: int('id_thread').notNull().references(() => forumThreads.idThread),
   idUser: int('id_user').references(() => users.idUser),
   content: text('content').notNull(),
+  imageUrl: text('imageUrl'), // Tambahkan kolom imageUrl
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
@@ -111,51 +113,70 @@ export type SelectForumReply = typeof forumReplies.$inferSelect;
 
 export const insertProductSchema = createInsertSchema(products);
 
-// Fungsi untuk mengakses products
+
 export async function getProducts(
   search: string,
-  offset: number = 0
+  offset: number = 0,
+  status?: string
 ): Promise<{
   products: SelectProduct[];
   newOffset: number;
   totalProducts: number;
 }> {
   try {
-    const productsPerPage = 5;
-    // Searching
-    if (search) {
-      const filteredProducts = await db
-        .select()
-        .from(products)
-        .where(like(products.name, `%${search}%`))
-        .limit(1000);
-      
-      return {
-        products: filteredProducts,
-        newOffset: offset,
-        totalProducts: filteredProducts.length
-      };
-    }
-
-    // Pagination
-    const totalProductsResult = await db.select({ count: count() }).from(products);
-    const totalCount = Number(totalProductsResult[0].count);
+    console.log("=== getProducts debug ===");
+    console.log("Search:", search);
+    console.log("Offset:", offset);
+    console.log("Status:", status);
     
-    const moreProducts = await db
+    const productsPerPage = 5;
+    let whereConditions: any[] = [];
+    if (search) {
+      whereConditions.push(like(products.name, `%${search}%`));
+    }
+    if (status && status !== 'all') {
+      whereConditions.push(eq(products.status, status as "active" | "inactive" | "archived"));
+    }
+    
+    // Build whereClause lebih eksplisit
+    const whereClause = whereConditions.length > 0 
+      ? and(...whereConditions) 
+      : undefined;
+    
+    console.log("Where conditions:", JSON.stringify(whereConditions));
+    
+    // Log query yang akan dijalankan
+    console.log("Running COUNT query...");
+    
+    const totalProductsResult = await db
+      .select({ count: count() })
+      .from(products)
+      .where(whereClause || sql`1=1`);
+      
+    const totalCount = Number(totalProductsResult[0].count);
+    console.log("Total count:", totalCount);
+  
+    console.log("Running PRODUCTS query...");
+    const filteredProducts = await db
       .select()
       .from(products)
+      .where(whereClause || sql`1=1`)
+      .orderBy(desc(products.availableAt))
       .limit(productsPerPage)
       .offset(offset);
     
-    const newOffset = moreProducts.length === productsPerPage ? offset + productsPerPage : null;
-
+    console.log("Products fetched:", filteredProducts.length);
+    
+    const newOffset = offset + productsPerPage;
+    
     return {
-      products: moreProducts,
-      newOffset : offset,
+      products: filteredProducts,
+      newOffset: newOffset,
       totalProducts: totalCount
     };
   } catch (error) {
     console.error("Error fetching products:", error);
+    console.error(error instanceof Error ? error.stack : "Unknown error type");
     return {
       products: [],
       newOffset: 0,
@@ -450,15 +471,14 @@ export const detail_transaksi = mysqlTable('detail_transaksi', {
 // Tambahkan fungsi untuk operasi forum
 export async function getForumThreads(tag?: string) {
   try {
-    // Gunakan pendekatan yang berbeda untuk filtering
     if (tag) {
-      // Jika ada tag, gunakan satu query dengan kondisi tag
       const threads = await db.select({
         idThread: forumThreads.idThread,
         title: forumThreads.title,
         content: forumThreads.content,
         category: forumThreads.category,
         tags: forumThreads.tags,
+        imageUrl: forumThreads.imageUrl, // Tambahkan imageUrl ke select
         createdAt: forumThreads.createdAt,
         userName: users.nama,
       })
@@ -469,13 +489,13 @@ export async function getForumThreads(tag?: string) {
       
       return threads;
     } else {
-      // Jika tidak ada tag, gunakan query tanpa filter
       const threads = await db.select({
         idThread: forumThreads.idThread,
         title: forumThreads.title,
         content: forumThreads.content,
         category: forumThreads.category,
         tags: forumThreads.tags,
+        imageUrl: forumThreads.imageUrl, // Tambahkan imageUrl ke select
         createdAt: forumThreads.createdAt,
         userName: users.nama,
       })
@@ -491,11 +511,14 @@ export async function getForumThreads(tag?: string) {
   }
 }
 
+// Update fungsi getThreadReplies
+
 export async function getThreadReplies(threadId: number) {
   try {
     const replies = await db.select({
       idReply: forumReplies.idReply,
       content: forumReplies.content,
+      imageUrl: forumReplies.imageUrl, // Tambahkan imageUrl ke select
       createdAt: forumReplies.createdAt,
       userName: users.nama,
     })
@@ -506,17 +529,19 @@ export async function getThreadReplies(threadId: number) {
     
     return replies;
   } catch (error) {
-    console.error("Error fetching thread replies:", error);
+    console.error(`Error fetching replies for thread ${threadId}:`, error);
     return [];
   }
 }
 
+// Update fungsi createForumThread untuk menerima imageUrl
 export async function createForumThread(threadData: {
   title: string;
   content: string;
   category: string;
   tags?: string;
-  idUser?: number;
+  imageUrl?: string | null; // Tambahkan imageUrl ke parameter
+  idUser?: number | null; // Tambahkan idUser untuk mengaitkan dengan user yang membuat thread
 }) {
   try {
     const result = await db.insert(forumThreads).values({
@@ -524,10 +549,10 @@ export async function createForumThread(threadData: {
       content: threadData.content,
       category: threadData.category,
       tags: threadData.tags,
+      imageUrl: threadData.imageUrl || null, // Include imageUrl in the insert
       idUser: threadData.idUser || null,
     });
     
-    // Perbaikan: Ambil ID yang baru dibuat dengan cara yang benar
     return { success: true, idThread: Number(result[0].insertId) };
   } catch (error) {
     console.error("Error creating forum thread:", error);
@@ -535,19 +560,21 @@ export async function createForumThread(threadData: {
   }
 }
 
+// Update fungsi createThreadReply
 export async function createThreadReply(replyData: {
   idThread: number;
   content: string;
+  imageUrl?: string | null; // Tambahkan imageUrl ke parameter
   idUser?: number;
 }) {
   try {
     const result = await db.insert(forumReplies).values({
       idThread: replyData.idThread,
       content: replyData.content,
+      imageUrl: replyData.imageUrl || null, // Include imageUrl in the insert
       idUser: replyData.idUser || null,
     });
     
-    // Perbaikan: Akses insertId dengan benar
     return { success: true, idReply: Number(result[0].insertId) };
   } catch (error) {
     console.error("Error creating thread reply:", error);
@@ -563,8 +590,6 @@ export async function getForumTags() {
     })
     .from(forumThreads)
     .where(sql`${forumThreads.tags} IS NOT NULL AND ${forumThreads.tags} <> ''`);
-    
-    // Proses tag secara manual di JavaScript
     const uniqueTags = new Set<string>();
     threads.forEach(thread => {
       if (thread.tags) {
@@ -581,4 +606,3 @@ export async function getForumTags() {
     return [];
   }
 }
-

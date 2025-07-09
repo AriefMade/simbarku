@@ -17,38 +17,37 @@ import {
 } from '@/components/common/ui/ui/card';
 import { Product } from './product';
 import { SelectProduct } from '@/lib/db';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/common/ui/ui/button';
+
 
 export function ProductsTable({
   products,
   offset,
-  totalProducts
+  totalProducts,
 }: {
   products: SelectProduct[];
   offset: number;
   totalProducts: number;
 }) {
-  let router = useRouter();
-  let productsPerPage = 5;
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const status = searchParams.get('status') || 'all';
+  const productsPerPage = 5;
+  const currentPage = Math.floor(offset / productsPerPage);
 
   function prevPage() {
-    // Calculate previous offset (ensure it's not negative)
-    const prevOffset = Math.max(0, offset - productsPerPage);
-    // Navigate to admin page with correct offset
+    const prevPage = Math.max(0, currentPage - 1);
+    const prevOffset = prevPage * productsPerPage;
     router.push(`/admin?offset=${prevOffset}`, { scroll: false });
   }
 
   function nextPage() {
-    // Calculate next offset
-    const nextOffset = offset + productsPerPage;
-    // Navigate to admin page with correct offset
+    const nextPage = currentPage + 1;
+    const nextOffset = nextPage * productsPerPage;
     router.push(`/admin?offset=${nextOffset}`, { scroll: false });
   }
-
-  const start = offset + 1;
-  const end = Math.min(offset + productsPerPage, totalProducts);
 
   return (
     <Card>
@@ -83,7 +82,7 @@ export function ProductsTable({
                 key={product.id} 
                 product={{
                   ...product,
-                  status: product.status || "active" // Convert null to a default status
+                  status: product.status || "active"
                 }} 
               />
             ))}
@@ -91,37 +90,37 @@ export function ProductsTable({
         </Table>
       </CardContent>
       <CardFooter>
-        <form className="flex items-center w-full justify-between">
+        <div className="flex items-center w-full justify-between">
           <div className="text-xs text-muted-foreground">
             Showing{' '}
             <strong>
-              {Math.max(0, Math.min(offset - productsPerPage, totalProducts) + 1)}-{offset}
+              {totalProducts === 0 ? 0 : offset + 1}-{Math.min(offset + products.length, totalProducts)}
             </strong>{' '}
             of <strong>{totalProducts}</strong> products
           </div>
           <div className="flex">
             <Button
-              formAction={prevPage}
+              onClick={prevPage}
               variant="ghost"
               size="sm"
-              type="submit"
-              disabled={offset === productsPerPage}
+              type="button"
+              disabled={offset === 0}
             >
               <ChevronLeft className="mr-2 h-4 w-4" />
               Prev
             </Button>
             <Button
-              formAction={nextPage}
+              onClick={nextPage}
               variant="ghost"
               size="sm"
-              type="submit"
-              disabled={offset + productsPerPage > totalProducts}
+              type="button"
+              disabled={offset + products.length >= totalProducts}
             >
               Next
               <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
-        </form>
+        </div>
       </CardFooter>
     </Card>
   );
