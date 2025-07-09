@@ -32,7 +32,7 @@ export const products = mysqlTable("products", {
   id: int("id").primaryKey().autoincrement(),
   name: text("name").notNull(),
   imageUrl: text("image_url").notNull(), // Sesuaikan nama field
-  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  price: decimal("price", { precision: 20, scale: 2 }).notNull(),
   stock: int("stock").notNull(),
   kategori: varchar("kategori", { length: 100 }).notNull(),
   status: mysqlEnum("status", ["active", "inactive", "archived"]).default("active"),

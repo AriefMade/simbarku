@@ -95,6 +95,7 @@ export async function POST(request: Request) {
     const stock = Number(formData.get('stock'));
     const kategori = formData.get('kategori') as string;
     
+    
     // Dapatkan file gambar jika ada
     const productImage = formData.get('productImage') as File | null;
     let imageUrl = '';
