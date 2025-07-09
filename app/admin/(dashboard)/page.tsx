@@ -4,6 +4,7 @@ import { Button } from '@/components/common/ui/ui/button';
 import { ProductsTable } from './products/products-table';
 import { getProducts } from '@/lib/db';
 import Link from 'next/link';
+import { SearchInput } from './search';
 
 export default async function ProductsPage(
   props: {
@@ -23,6 +24,7 @@ export default async function ProductsPage(
 
     return (
       <Tabs defaultValue={status}>
+        <SearchInput />
         <div className="flex items-center">
           <div className="ml-auto flex items-center gap-2">
             <Link href="/admin/products/new">

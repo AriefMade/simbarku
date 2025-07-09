@@ -1,4 +1,3 @@
-import { Metadata } from 'next';
 import { CustomersTable } from './customersTable';
 import { getAllUsers } from '@/lib/db';
 import {
@@ -36,7 +35,6 @@ export default async function CustomersPage({
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          
           <Tabs defaultValue="all">
             <div className="flex items-center">
               <div className="ml-auto flex items-center gap-2">

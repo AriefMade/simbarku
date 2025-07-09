@@ -20,6 +20,7 @@ import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/common/ui/ui/button';
 import { TransactionRow } from './transactionsRow';
+import { SearchInput } from '../search';
 
 export function TransactionsTable({
   transactions,

@@ -4,6 +4,7 @@ import { Button } from '@/components/common/ui/ui/button';
 import { TransactionsTable } from './transactionsTable';
 import { getTransactionsWithUserData, getUsers } from '@/lib/db';
 import Link from 'next/link';
+import { SearchInput } from '../search';
 
 export default async function OrdersPage(
   props: {
@@ -15,7 +16,7 @@ export default async function OrdersPage(
   const statusFilter = props.searchParams.status || 'all';
 
   const { transactions, totalTransactions } = await getTransactionsWithUserData(offset);
-  const { users } = await getUsers();
+  const { users } = await getUsers(search);
   
   const filteredTransactions = statusFilter === 'all' 
     ? transactions 
@@ -23,12 +24,6 @@ export default async function OrdersPage(
   
   return (
     <>
-      <div className="flex items-center text-sm text-gray-500 mb-4">
-        <Link href="/admin" className="hover:underline">Dashboard</Link>
-        <ChevronRight className="h-4 w-4 mx-1" />
-        <span>Orders</span>
-      </div>
-      
       <h1 className="text-2xl font-bold tracking-tight">Transaksi</h1>
       
       <div className="mt-6">

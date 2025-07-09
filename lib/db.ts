@@ -12,7 +12,7 @@ import {
   binary,
   date
 } from 'drizzle-orm/mysql-core';
-import { count, eq, like, desc, sql, inArray, and, or } from 'drizzle-orm';
+import { count, eq, like, desc, sql, inArray, and } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 
 
@@ -143,8 +143,6 @@ export async function getProducts(
       ? and(...whereConditions) 
       : undefined;
     
-    console.log("Where conditions:", JSON.stringify(whereConditions));
-    
     // Log query yang akan dijalankan
     console.log("Running COUNT query...");
     
@@ -213,16 +211,25 @@ export async function getAdminByUsername(username: string) {
 }
 
 // Fungsi untuk mendapatkan users
-export async function getUsers(offset: number = 0): Promise<{
+export async function getUsers(
+  search: string,
+  offset: number = 0
+): Promise<{
   users: SelectUser[];
   totalUsers: number;
 }> {
   try {
     const usersPerPage = 10;
     const totalUsersResult = await db.select({ count: count() }).from(users);
+    const whereClause = []
+    if (search) {
+      whereClause.push(like(users.nama, `%${search}%`));
+    }
+    const whereCondition = whereClause.length > 0 ? and(...whereClause) : undefined;
     const usersList = await db
       .select()
       .from(users)
+      .where(whereCondition)
       .limit(usersPerPage)
       .offset(offset);
     
@@ -240,17 +247,27 @@ export async function getUsers(offset: number = 0): Promise<{
 }
 
 // Fungsi untuk mendapatkan transaksi
-export async function getTransactions(offset: number = 0): Promise<{
+export async function getTransactions(
+  search: string,
+  offset: number = 0
+): Promise<{
   transactions: SelectTransaksi[];
   totalTransactions: number;
 }> {
   try {
     const transactionsPerPage = 10;
     const totalTransactionsResult = await db.select({ count: count() }).from(transactions);
-    
+
+    const whereClause = [];
+    if (search) {
+      whereClause.push(like(transactions.id_transaksi, `%${search}%`));
+    }
+    const whereCondition = whereClause.length > 0 ? and(...whereClause) : undefined;
+
     const transactionsList = await db
       .select()
       .from(transactions)
+      .where(whereCondition)
       .limit(transactionsPerPage)
       .offset(offset)
       .orderBy(desc(transactions.tanggal));
@@ -258,7 +275,7 @@ export async function getTransactions(offset: number = 0): Promise<{
     return {
       transactions: transactionsList.map(t => ({
         ...t,
-        status: t.status || 'pending' // Pastikan selalu ada status
+        status: t.status || 'pending'
       })),
       totalTransactions: Number(totalTransactionsResult[0].count)
     };
@@ -272,7 +289,10 @@ export async function getTransactions(offset: number = 0): Promise<{
 }
 
 // Fungsi untuk mendapatkan transaksi dengan data user
-export async function getTransactionsWithUserData(offset: number = 0): Promise<{
+export async function getTransactionsWithUserData(
+  offset: number = 0,
+  search: string = ''
+): Promise<{
   transactions: (SelectTransaksi & { userName: string })[];
   totalTransactions: number;
 }> {
@@ -280,7 +300,13 @@ export async function getTransactionsWithUserData(offset: number = 0): Promise<{
     const transactionsPerPage = 10;
     const totalTransactionsResult = await db.select({ count: count() }).from(transactions);
     
-    // Query dengan join untuk mendapatkan nama user
+     const whereClauses = [];
+    if (search) {
+      // Cari berdasarkan nama pengguna
+      whereClauses.push(like(users.nama, `%${search}%`));
+    }
+    const whereCondition = whereClauses.length > 0 ? and(...whereClauses) : undefined;
+    
     const result = await db
       .select({
         id_transaksi: transactions.id_transaksi,
@@ -294,8 +320,9 @@ export async function getTransactionsWithUserData(offset: number = 0): Promise<{
       .leftJoin(users, eq(transactions.id_user, users.idUser))
       .limit(transactionsPerPage)
       .offset(offset)
-      .orderBy(desc(transactions.tanggal));
-    
+      .orderBy(desc(transactions.tanggal))
+      .where(whereCondition);
+
     return {
       transactions: result.map(tx => ({
         ...tx,

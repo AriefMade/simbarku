@@ -13,7 +13,6 @@ import {
   X,
 } from 'lucide-react';
 import { User } from './user';
-import { SearchInput } from './search';
 
 import '../admin.css';
 import Providers from './providers';
@@ -27,7 +26,6 @@ export default function AdminDashboardLayout({
   return (
     <Providers>
       <div className="admin-layout min-h-screen flex flex-col">
-        {/* Header - Fixed at top - SIMPLIFIED WITHOUT NAVBAR ICONS */}
         <header className="sticky top-0 z-30 bg-white border-b shadow-sm">
           <div className="flex h-16 items-center justify-between px-4 md:px-6">
             <div className="flex">
@@ -122,9 +120,15 @@ export default function AdminDashboardLayout({
                   <div className="space-y-1">
                     <Link 
                       href="/admin/customers" 
-                      className="flex items-center px-3 py-2 text-sm rounded-md hover:bg-gray-100"
+                      className={`flex items-center px-3 py-2 text-sm rounded-md ${
+                        pathname.includes('/admin/customers') 
+                          ? 'bg-gray-100 text-gray-900 font-medium' 
+                          : 'hover:bg-gray-100'
+                      }`}
                     >
-                      <Users2 className="h-5 w-5 mr-3 text-gray-500" />
+                      <Users2 className={`h-5 w-5 mr-3 ${
+                        pathname.includes('/admin/customers') ? 'text-gray-700' : 'text-gray-500'
+                      }`} />
                       All Customers
                     </Link>
                   </div>
@@ -223,7 +227,6 @@ export default function AdminDashboardLayout({
             <div className="container max-w-screen-xl mx-auto p-6 space-y-6">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div className="flex items-center gap-2">
-                  <SearchInput />
                 </div>
               </div>
               {children}
