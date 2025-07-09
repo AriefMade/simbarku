@@ -444,12 +444,12 @@ export async function getAllUsers(offset = 0, limit = 10) {
       .limit(limit)
       .offset(offset);
     
-    const totalUsers = await db.select({ count: count() })
+    const totalUsersResult = await db.select({ count: count() })
       .from(users);
     
     return {
       users: usersList,
-      totalUsers: totalUsers[0].count
+      totalUsers: totalUsersResult[0].count
     };
   } catch (error) {
     console.error('Error fetching users:', error);

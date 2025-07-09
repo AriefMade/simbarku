@@ -6,14 +6,13 @@ import { getProducts } from '@/lib/db';
 import Link from 'next/link';
 import { SearchInput } from './search';
 
-export default async function ProductsPage(
-  props: {
-    searchParams: { q?: string; offset?: string; status?: string };
-  }
-) {
-  const search = props.searchParams.q ?? '';
-  const offset = props.searchParams.offset ? parseInt(props.searchParams.offset, 10) : 0;
-  const status = props.searchParams.status ?? 'all';
+export default async function ProductsPage(props: {
+  searchParams: Promise<{ q?: string; offset?: string; status?: string }>
+}) {
+  const searchParams = await props.searchParams; // Await searchParams
+  const search = searchParams.q ?? '';
+  const offset = searchParams.offset ? parseInt(searchParams.offset, 10) : 0;
+  const status = searchParams.status ?? 'all';
 
   try {
     const { products, newOffset, totalProducts } = await getProducts(

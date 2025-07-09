@@ -10,9 +10,10 @@ import { formatPrice } from '@/lib/utils';
 export default async function CustomerDetailPage({
   params
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }> // Ubah dari { id: string } menjadi Promise<{ id: string }>
 }) {
-  const userId = parseInt(params.id, 10);
+  const { id } = await params; // Await params untuk mendapatkan nilai id
+  const userId = parseInt(id, 10);
   
   if (isNaN(userId)) {
     notFound();

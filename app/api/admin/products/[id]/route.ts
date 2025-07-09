@@ -8,39 +8,33 @@ import { existsSync } from 'fs';
 
 // Helper function untuk menyimpan gambar
 async function saveImage(file: File): Promise<string> {
-  // Buat direktori jika belum ada
-  const uploadDir = join(process.cwd(), 'public/images/product');
+  const bytes = await file.arrayBuffer();
+  const buffer = Buffer.from(bytes);
   
+  // Pastikan folder public/images/products ada
+  const uploadDir = join(process.cwd(), 'public', 'images', 'products');
   if (!existsSync(uploadDir)) {
     await mkdir(uploadDir, { recursive: true });
   }
   
-  // Generate nama file unik: timestamp + nama produk tanpa spasi + ekstensi asli
-  const timestamp = Date.now();
-  const originalName = file.name.replace(/\s+/g, '-').toLowerCase();
-  const fileExtension = originalName.split('.').pop();
-  const fileName = `${timestamp}-${originalName}`;
+  // Generate unique filename
+  const filename = `${Date.now()}-${file.name}`;
+  const path = join(uploadDir, filename);
   
-  // Path lengkap dimana file akan disimpan
-  const filePath = join(uploadDir, fileName);
+  // Simpan file
+  await writeFile(path, buffer);
   
-  // Convert File to Buffer
-  const arrayBuffer = await file.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
-  
-  // Simpan file ke disk
-  await writeFile(filePath, buffer);
-  
-  // Return path relatif untuk disimpan di database
-  return `/images/product/${fileName}`;
+  // Return URL yang bisa diakses
+  return `/images/products/${filename}`;
 }
 
 // GET specific product by ID
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> } // Ubah dari { params: { id: string } } menjadi Promise
 ) {
   try {
+    const params = await props.params; // Await params
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json(
@@ -83,9 +77,10 @@ export async function GET(
 // PUT - update a product
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> } // Ubah dari { params: { id: string } } menjadi Promise
 ) {
   try {
+    const params = await props.params; // Await params
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json(
@@ -168,9 +163,10 @@ export async function PUT(
 // DELETE - delete a product
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> } // Ubah dari { params: { id: string } } menjadi Promise
 ) {
   try {
+    const params = await props.params; // Await params
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json(

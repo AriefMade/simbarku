@@ -73,15 +73,16 @@ async function getTransactionDetails(id: number) {
 export default async function TransactionDetailPage({
   params
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }> // Ubah dari { id: string } menjadi Promise<{ id: string }>
 }) {
-  const id = parseInt(params.id, 10);
+  const { id } = await params; // Await params untuk mendapatkan nilai id
+  const transactionId = parseInt(id, 10);
   
-  if (isNaN(id)) {
+  if (isNaN(transactionId)) {
     notFound();
   }
   
-  const details = await getTransactionDetails(id);
+  const details = await getTransactionDetails(transactionId);
   
   if (!details) {
     notFound();
@@ -115,11 +116,11 @@ export default async function TransactionDetailPage({
         <ChevronRight className="h-4 w-4 mx-1" />
         <Link href="/admin/orders" className="hover:underline">Orders</Link>
         <ChevronRight className="h-4 w-4 mx-1" />
-        <span>Order #{id}</span>
+        <span>Order #{transactionId}</span>
       </div>
       
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">Detail Transaksi #{id}</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Detail Transaksi #{transactionId}</h1>
         <div>
           {getStatusBadge(transaction.status || 'pending')}
         </div>

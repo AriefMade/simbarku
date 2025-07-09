@@ -1,19 +1,12 @@
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/common/ui/ui/tabs';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/common/ui/ui/card';
 import { CustomersTable } from './customersTable';
 import { getAllUsers } from '@/lib/db';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/common/ui/ui/card';
-import { Tabs, TabsContent } from '@/components/common/ui/ui/tabs';
 
-export default async function CustomersPage({
-  searchParams
-}: {
-  searchParams: { q?: string; offset?: string; }
+export default async function CustomersPage(props: {
+  searchParams: Promise<{ q?: string; offset?: string; }>
 }) {
+  const searchParams = await props.searchParams; // Await searchParams
   const search = searchParams.q ?? '';
   const offset = searchParams.offset ? parseInt(searchParams.offset) : 0;
   
@@ -49,7 +42,7 @@ export default async function CustomersPage({
             </TabsContent>
             <TabsContent value="active" className="mt-4">
               <CustomersTable
-                customers={transformedCustomers.filter(user =>true)}
+                customers={transformedCustomers.filter(user => true)}
                 offset={0}
                 totalCustomers={transformedCustomers.filter(user => true).length}
               />

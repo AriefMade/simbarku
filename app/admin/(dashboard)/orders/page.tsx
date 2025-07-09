@@ -6,14 +6,13 @@ import { getTransactionsWithUserData, getUsers } from '@/lib/db';
 import Link from 'next/link';
 import { SearchInput } from '../search';
 
-export default async function OrdersPage(
-  props: {
-    searchParams: { q?: string; offset?: string; status?: string };
-  }
-) {
-  const search = props.searchParams.q ?? '';
-  const offset = props.searchParams.offset ? parseInt(props.searchParams.offset) : 0;
-  const statusFilter = props.searchParams.status || 'all';
+export default async function OrdersPage(props: {
+  searchParams: Promise<{ q?: string; offset?: string; status?: string }>
+}) {
+  const searchParams = await props.searchParams; // Await searchParams
+  const search = searchParams.q ?? '';
+  const offset = searchParams.offset ? parseInt(searchParams.offset) : 0;
+  const statusFilter = searchParams.status || 'all';
 
   const { transactions, totalTransactions } = await getTransactionsWithUserData(offset);
   const { users } = await getUsers(search);

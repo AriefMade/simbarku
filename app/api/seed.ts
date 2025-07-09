@@ -6,22 +6,24 @@ export async function GET() {
     // Hapus data yang ada jika diperlukan
     await db.delete(products);
     
-    // Tambahkan data contoh
+    // Tambahkan data contoh dengan semua field yang diperlukan
     await db.insert(products).values([
       {
         imageUrl: '/placeholder.svg',
         name: 'Product 1',
-        status: 'active',
+        status: 'active' as const,
         price: '19.99',
         stock: 10,
+        kategori: 'tanaman', // Tambahkan field kategori
         availableAt: new Date()
       },
       {
         imageUrl: '/placeholder.svg',
         name: 'Product 2',
-        status: 'inactive',
+        status: 'inactive' as const,
         price: '29.99',
         stock: 5,
+        kategori: 'mediaTanaman', // Tambahkan field kategori
         availableAt: new Date()
       }
     ]);
